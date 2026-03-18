@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginScreen from '../screens/auth/LoginScreen';
 import SignupScreen from '../screens/auth/SignupScreen';
+import CompanyAdminScreen from '../screens/auth/CompanyAdminScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import VerifyCodeScreen from '../screens/auth/VerifyCodeScreen';
 import NewPasswordScreen from '../screens/auth/NewPasswordScreen';
@@ -17,14 +18,14 @@ export default function AuthStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="CompanyAdmin" component={CompanyAdminScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
       <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
       <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
       <Stack.Screen name="MoodSelection" component={MoodSelectionScreen} />
       <Stack.Screen
-        name="InterestSelection"
-        component={InterestSelectionScreen}
+        name="InterestSelection"component={InterestSelectionScreen}
       />
     </Stack.Navigator>
   );

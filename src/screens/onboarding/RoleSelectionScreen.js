@@ -1,103 +1,124 @@
 import React, { useState } from "react";
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import RadialGradient from "react-native-radial-gradient";
-import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 
-const RoleSelection = (props) => {
-  const [selectedOption, setSelectedOption] = useState('Individual');
+const RoleSelection = ({ navigation }) => {
+  const [selectedOption, setSelectedOption] = useState("Individual");
+
   const options = [
-    { label: 'Individual', value: 'Individual' },
-    { label: 'Community', value: 'Community' },
-    { label: 'Organisation', value: 'Organisation' },
+    { label: "Individual", value: "Individual" },
+    { label: "Community", value: "Community" },
+    { label: "Organisation", value: "Organisation" },
   ];
 
   const handleNavigation = () => {
-    if (selectedOption === 'Individual') {
-      props.navigation.navigate('Signup'); // Navigate to Signup for Individual
-    } else {
-      props.navigation.navigate('CompanyAdmin'); // Navigate to CompanyAdmin for Community/Organisation
-    }
+    navigation.navigate("AuthStack", {
+      screen:
+        selectedOption === "Individual" ? "Signup" : "CompanyAdmin",
+    });
   };
 
   return (
     <View style={{ flex: 1 }}>
- <Image source={require("../../assets/images/Splashbackground.jpg")}
-            style={{ height: 700, width: 400 }}
-         />      <View style={{
-        backgroundColor: "white",
-        position: "absolute",
-        height: 250,
-        width: 360,
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20
-      }}>
-        <Text style={{
-          fontSize: 25,
-          fontWeight: "900",
-          fontStyle: "italic",
-          alignSelf: "center",
-          top: 25
-        }}>How are you using</Text>
+      <Image
+        source={require("../../assets/images/Splashbackground.jpg")}
+        style={{ height: "100%", width: "100%", position: "absolute" }}
+      />
 
-        <Text style={{
-          fontSize: 25,
-          fontWeight: "900",
-          fontStyle: "italic",
+      <View
+        style={{
+          backgroundColor: "white",
+          position: "absolute",
+          height: H(40),
+          width: "100%",
           alignSelf: "center",
-          top: 15
-        }}>
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "900",
+            fontStyle: "italic",
+            alignSelf: "center",
+            marginTop: 25,
+          }}
+        >
+          How are you using
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "900",
+            fontStyle: "italic",
+            alignSelf: "center",
+          }}
+        >
           Planet Care?
         </Text>
-        
+
         {options.map((option) => (
           <TouchableOpacity
             key={option.value}
             onPress={() => setSelectedOption(option.value)}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 10,
-              marginLeft: 10,
-              top: 35,
-              left: 40,
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 10,
+              marginLeft: 40,
             }}
           >
-            <View style={{
-              width: 15,
-              height: 15,
-              borderRadius: 7.5,
-              borderWidth: 0.6,
-              borderColor: 'gray',
-              backgroundColor: selectedOption === option.value ? 'rgba(255, 215, 0, 1)' : 'white',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 25,
-            }}>
+            <View
+              style={{
+                width: 15,
+                height: 15,
+                borderRadius: 7.5,
+                borderWidth: 0.6,
+                borderColor: "gray",
+                backgroundColor:
+                  selectedOption === option.value
+                    ? "rgba(255, 215, 0, 1)"
+                    : "white",
+                justifyContent: "center",
+                alignItems: "center",
+                marginRight: 15,
+              }}
+            >
               {selectedOption === option.value && (
-                <View style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 5,
-                  backgroundColor: 'rgba(255, 215, 0, 1)',
-                }} />
+                <View
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor: "rgba(255, 215, 0, 1)",
+                  }}
+                />
               )}
             </View>
+
             <Text>{option.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      
-      <TouchableOpacity 
-        onPress={handleNavigation} 
+
+      <TouchableOpacity
+        onPress={handleNavigation}
         style={{
           position: "absolute",
-          top: H(32),
+          top: H(30),
           alignSelf: "center",
         }}
       >
-        <View>
-          <Image source={require("../../assets/images/yellow.png")} style={{ height: 40, width: 40, alignSelf: "center" }} />
-        </View>
+        <Image
+          source={require("../../assets/images/yellow.png")}
+          style={{ height: 50, width: 50 }}
+        />
       </TouchableOpacity>
 
       <RadialGradient
@@ -120,7 +141,7 @@ const RoleSelection = (props) => {
           opacity: 0.9,
         }}
       />
-      
+
       <Image
         source={require("../../assets/images/greenplante.png")}
         style={{

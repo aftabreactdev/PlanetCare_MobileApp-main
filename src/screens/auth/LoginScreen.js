@@ -1,196 +1,252 @@
-import React, { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import ScreenWrapper from '../../components/ScreenWrapper';
-import AuthHeader from '../../components/AuthHeader';
-import CustomInput from '../../components/CustomInput';
-import CustomButton from '../../components/CustomButton';
-import SocialButton from '../../components/SocialButton';
-import colors from '../../constants/colors';
-import images from '../../constants/images';
+import React, { useState } from "react";
+import { Text, View, Image, TextInput, TouchableOpacity, Alert } from "react-native";
+import RadialGradient from "react-native-radial-gradient";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-import { loginUser } from '../../services/authService';
-import { isEmpty, isValidEmail } from '../../utils/validators';
-import { showMessage } from '../../utils/showMessage';
+const Login1 = (props) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
 
-const handleLogin = async () => {
-  if (isEmpty(email)) {
-    showMessage('Validation Error', 'Email is required');
-    return;
-  }
+    // ✅ Email validation
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!isValidEmail(email)) {
-    showMessage('Validation Error', 'Enter a valid email');
-    return;
-  }
+        if (!email.trim()) return "Email is required";
+        if (!emailRegex.test(email)) return "Invalid email format";
 
-  if (isEmpty(password)) {
-    showMessage('Validation Error', 'Password is required');
-    return;
-  }
+        return "";
+    };
 
-  const payload = {
-    email,
-    password,
-  };
+    // ✅ Password validation
+    const validatePassword = (password) => {
+        if (!password.trim()) return "Password is required";
+        if (password.length < 6) return "Minimum 6 characters required";
 
-  const response = await loginUser(payload);
+        return "";
+    };
 
-  if (response?.success) {
-    navigation.navigate('AuthStack', { screen: 'ProfileSetup' });
-  }
+    // ✅ Handle email
+    const handleEmailChange = (text) => {
+        setEmail(text);
+        setEmailError(validateEmail(text));
+    };
+
+    // ✅ Handle password
+    const handlePasswordChange = (text) => {
+        setPassword(text);
+        setPasswordError(validatePassword(text));
+    };
+
+    // ✅ Form valid check
+    const isFormValid =
+        email &&
+        password &&
+        !validateEmail(email) &&
+        !validatePassword(password);
+
+    // ✅ Login handler
+    const handleLogin = () => {
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        const emailErr = validateEmail(trimmedEmail);
+        const passErr = validatePassword(trimmedPassword);
+
+        setEmailError(emailErr);
+        setPasswordError(passErr);
+
+        if (emailErr || passErr) {
+            Alert.alert("Error", emailErr || passErr);
+            return;
+        }
+
+        Alert.alert("Success", "Login Successful!");
+      props.navigation.navigate("MainTabs", {
+    screen: "Home"
+});
+    };
+
+    return (
+        <View>
+            <Image
+                source={require("../../assets/images/Splashbackground.jpg")}
+                style={{ height: 700, width: 400 }}
+            />
+
+            <RadialGradient
+                colors={[
+                    "rgba(143, 0, 255, 1)",
+                    "rgba(143, 0, 250, 0.6)",
+                    "rgba(160, 80, 220, 0.2)",
+                    "rgba(200, 120, 255, 0.0)",
+                ]}
+                stops={[0.1, 0.6, 0.9, 1]}
+                center={[200, 200]}
+                radius={200}
+                style={{
+                    position: "absolute",
+                    top: 150,
+                    alignSelf: "center",
+                    width: 400,
+                    height: 400,
+                    borderRadius: 200,
+                }}
+            />
+
+            {/* Header */}
+            <Text style={{
+                color: "white",
+                position: "absolute",
+                top: 60,
+                alignSelf: "center",
+                fontSize: 40,
+                fontWeight: "bold",
+            }}>
+                Login
+            </Text>
+
+            <Text style={{
+                color: "white",
+                position: "absolute",
+                top: 110,
+                fontSize: 25,
+                alignSelf: "center",
+            }}>
+                Hi Welcome back,
+            </Text>
+
+            {/* Card */}
+            <View style={{
+                backgroundColor: "white",
+                height: 450,
+                width: 360,
+                position: "absolute",
+                top: 250,
+                borderRadius: 30,
+                paddingTop: 20,
+            }}>
+                <Text style={{
+                    fontSize: 25,
+                    alignSelf: "center",
+                    fontWeight: "900",
+                }}>
+                    Login
+                </Text>
+
+                {/* Email */}
+                <View style={{ marginTop: 40, paddingHorizontal: 20 }}>
+                    <Text style={{ fontWeight: "bold" }}>Email</Text>
+
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        borderBottomWidth: 1,
+                        borderColor: emailError ? "red" : "#ccc",
+                    }}>
+                        <Icon name="envelope" size={12} />
+                        <TextInput
+                            style={{ flex: 1, marginLeft: 10 }}
+                            placeholder="example@gmail.com"
+                            value={email}
+                            onChangeText={handleEmailChange}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
+                    </View>
+
+                    {emailError ? (
+                        <Text style={{ color: "red", fontSize: 11 }}>
+                            {emailError}
+                        </Text>
+                    ) : null}
+                </View>
+
+                {/* Password */}
+                <View style={{ marginTop: 30, paddingHorizontal: 20 }}>
+                    <Text style={{ fontWeight: "bold" }}>Password</Text>
+
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        borderBottomWidth: 1,
+                        borderColor: passwordError ? "red" : "#ccc",
+                    }}>
+                        <Icon name="lock" size={14} />
+
+                        <TextInput
+                            style={{ flex: 1, marginLeft: 10 }}
+                            placeholder="********"
+                            secureTextEntry={!showPassword}
+                            value={password}
+                            onChangeText={handlePasswordChange}
+                        />
+
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <Icon name={showPassword ? "eye-slash" : "eye"} size={14} />
+                        </TouchableOpacity>
+                    </View>
+
+                    {passwordError ? (
+                        <Text style={{ color: "red", fontSize: 11 }}>
+                            {passwordError}
+                        </Text>
+                    ) : null}
+                </View>
+
+                {/* Forgot */}
+                <TouchableOpacity
+                    onPress={() => props.navigation.navigate("ForgotPassword")}
+                    style={{ marginTop: 10, alignSelf: "flex-end", marginRight: 20 }}
+                >
+                    <Text style={{ color: "#0099ff", fontSize: 12 }}>
+                        Forgot Password?
+                    </Text>
+                </TouchableOpacity>
+
+                {/* Button */}
+                <TouchableOpacity
+                    disabled={!isFormValid}
+                    onPress={handleLogin}
+                    style={{
+                        marginTop: 30,
+                        alignSelf: "center",
+                        opacity: isFormValid ? 1 : 0.5,
+                    }}
+                >
+                    <Text style={{
+                        backgroundColor: "gold",
+                        paddingVertical: 8,
+                        paddingHorizontal: 50,
+                        borderRadius: 10,
+                        fontWeight: "bold",
+                    }}>
+                        Login
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* Signup */}
+            <View style={{
+                position: "absolute",
+                bottom: 30,
+                flexDirection: "row",
+                alignSelf: "center",
+            }}>
+                <Text style={{ color: "#ccc" }}>
+                    Don’t have an account? 
+                </Text>
+                <TouchableOpacity onPress={() => props.navigation.navigate("Signup")}>
+                    <Text style={{ color: "#0099ff", marginLeft: 5 }}>
+                        Sign Up
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 };
 
-  return (
-    <ScreenWrapper>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.container}>
-            <AuthHeader
-              title="Login"
-              subtitle="Welcome back! Sign in to continue your wellness journey."
-            />
-
-            <SocialButton
-              title="Continue with Google"
-              icon={images.googleIcon}
-              onPress={() => {}}
-            />
-
-            <SocialButton
-              title="Continue with Apple"
-              icon={images.appleIcon}
-              onPress={() => {}}
-            />
-
-            <View style={styles.dividerRow}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <CustomInput
-              label="Email"
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-
-            <CustomInput
-              label="Password"
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.forgotWrapper}
-              onPress={() =>
-                navigation.navigate('AuthStack', { screen: 'ForgotPassword' })
-              }
-            >
-              <Text style={styles.forgotText}>Forgot Password?</Text>
-            </TouchableOpacity>
-
-            <CustomButton
-              title="Login"
-              onPress={handleLogin}
-              style={styles.loginButton}
-            />
-
-            <View style={styles.footerRow}>
-              <Text style={styles.footerText}>Don’t have an account? </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('AuthStack', { screen: 'Signup' })
-                }
-              >
-                <Text style={styles.footerLink}>Sign Up</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </ScreenWrapper>
-  );
-}
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#07132A',
-    paddingHorizontal: 24,
-    paddingTop: 36,
-    paddingBottom: 24,
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 18,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-  dividerText: {
-    color: 'rgba(255,255,255,0.7)',
-    marginHorizontal: 12,
-    fontSize: 14,
-  },
-  forgotWrapper: {
-    alignSelf: 'flex-end',
-    marginTop: -4,
-    marginBottom: 24,
-  },
-  forgotText: {
-    color: '#7EC8FF',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  loginButton: {
-    marginTop: 6,
-  },
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 24,
-    flexWrap: 'wrap',
-  },
-  footerText: {
-    color: 'rgba(255,255,255,0.72)',
-    fontSize: 14,
-  },
-  footerLink: {
-    color: '#FFC83D',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});
+export default Login1;
