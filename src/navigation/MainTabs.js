@@ -1,6 +1,8 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import MainDashboardScreen from '../screens/dashboard/MainDashboardScreen';
 import CheckinScreen from '../screens/checkin/CheckinScreen';
@@ -9,101 +11,113 @@ import InsightsScreen from '../screens/insights/InsightsScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
-function TabLabel({ label, focused }) {
+const Dummy = ({ title }) => (
+  <View style={styles.screen}>
+    <Text>{title}</Text>
+  </View>
+);
+
+// Example stack for Home (like MinifeedStack)
+function HomeStack() {
   return (
-    <Text style={[styles.tabLabel, focused && styles.activeTabLabel]}>
-      {label}
-    </Text>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Minifeed" component={MainDashboardScreen} />
+      <Stack.Screen name="Details" component={() => <Dummy title="Details Screen" />} />
+    </Stack.Navigator>
   );
 }
 
 export default function MainTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: styles.tabBar,
-        tabBarShowLabel: false,
+        tabBarActiveTintColor: '#4FC3F7',
+        tabBarInactiveTintColor: 'gray',
         tabBarHideOnKeyboard: true,
-      }}
+        tabBarIcon: ({ focused }) => {
+          if (route.name === 'Profile') {
+            return (
+              <Icon
+                name="person"
+                size={22}
+                color={focused ? '#4FC3F7' : 'gray'}
+              />
+            );
+          }
+
+          let imageSource;
+
+          if (route.name === 'Minifeed')
+            imageSource = require('../assets/icons/Minifeed.png');
+          else if (route.name === 'Checkin')
+            imageSource = require('../assets/icons/Pods.png');
+          else if (route.name === 'Journal')
+            imageSource = require('../assets/icons/Resources.png');
+          else if (route.name === 'Insights')
+            imageSource = require('../assets/icons/Insights.png');
+
+          return (
+            <Image
+              source={imageSource}
+              style={{
+                width: 22,
+                height: 22,
+                tintColor: focused ? '#4FC3F7' : 'gray',
+              }}
+            />
+          );
+        },
+      })}
     >
-      <Tab.Screen
-        name="Home"
-        component={MainDashboardScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabLabel label="Home" focused={focused} />
-          ),
-        }}
-      />
+      {/* Home with Stack */}
+      <Tab.Screen name="Minifeed" component={HomeStack} />
 
       <Tab.Screen
         name="Checkin"
         component={CheckinScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabLabel label="Check-in" focused={focused} />
-          ),
-        }}
+      />
+
+        <Tab.Screen
+        name="Insights"
+        component={InsightsScreen}
       />
 
       <Tab.Screen
         name="Journal"
         component={JournalingScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabLabel label="Journal" focused={focused} />
-          ),
-        }}
       />
 
-      <Tab.Screen
-        name="Insights"
-        component={InsightsScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabLabel label="Insights" focused={focused} />
-          ),
-        }}
-      />
+    
 
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabLabel label="Profile" focused={focused} />
-          ),
-        }}
       />
     </Tab.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   tabBar: {
     position: 'absolute',
     left: 16,
     right: 16,
-    bottom: 18,
-    height: 68,
-    backgroundColor: '#121F3D',
-    borderRadius: 24,
+   height: 68,
+    backgroundColor: '#000',
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
     borderTopWidth: 0,
-    paddingTop: 10,
-    paddingBottom: 10,
     elevation: 0,
     shadowOpacity: 0,
-  },
-  tabLabel: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 11,
-    fontWeight: '600',
-    width: 68,
-    textAlign: 'center',
-  },
-  activeTabLabel: {
-    color: '#FFC83D',
   },
 });
