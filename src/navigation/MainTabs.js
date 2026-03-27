@@ -9,7 +9,7 @@ import CheckinScreen from '../screens/checkin/CheckinScreen';
 import JournalingScreen from '../screens/journaling/JournalingScreen';
 import InsightsScreen from '../screens/insights/InsightsScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-
+import HomeDashboad2 from '../screens/dashboard/HomeDashboad2';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +24,7 @@ function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Minifeed" component={MainDashboardScreen} />
-      <Stack.Screen name="Details" component={() => <Dummy title="Details Screen" />} />
+      <Stack.Screen name="HomeDashboad2" component={HomeDashboad2} />
     </Stack.Navigator>
   );
 }

@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-
+import { useNavigation } from "@react-navigation/native";
 const AffirmationCard = () => {
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate("HomeDashboad2")}>
       <View
         style={{
           marginHorizontal: 20,
