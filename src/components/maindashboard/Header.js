@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+
 
 const Header = () => {
 
@@ -20,6 +22,9 @@ const Header = () => {
 
   // ✅ Icon color logic
   const iconColor = isMorning ? "black" : "white";
+
+    const navigation = useNavigation();
+  
 
   return (
     <View
@@ -46,11 +51,11 @@ const Header = () => {
           flexDirection: "row",
         }}
       >
-        <TouchableOpacity style={{ marginRight: 15 }}>
+        <TouchableOpacity style={{ marginRight: 15 }} onPress={() => navigation.navigate("NotificationItem")}>
           <Icon
             name="notifications"
             size={24}
-            color={iconColor} // ✅ dynamic color
+            color={iconColor}
           />
         </TouchableOpacity>
 

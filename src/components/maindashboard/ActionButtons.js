@@ -21,7 +21,7 @@ const ActionButtons = () => {
             ].map((item, i) => (
                 <TouchableOpacity key={i} style={{ width: "30%" }}>
                     <LinearGradient
-                        colors={["rgba(143,0,255,0.5)", "rgba(0,42,138,1)"]}
+                        colors={["rgba(143, 0, 255, 0.5)", "rgba(0, 42, 138, 1)"]}
                         style={{
                             height: 90,
                             borderRadius: 14,

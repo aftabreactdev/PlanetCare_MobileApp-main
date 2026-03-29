@@ -1,159 +1,227 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-} from 'react-native';
-import ScreenWrapper from '../../components/ScreenWrapper';
-import AuthHeader from '../../components/AuthHeader';
-import CustomInput from '../../components/CustomInput';
-import CustomButton from '../../components/CustomButton';
-import colors from '../../constants/colors';
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Icons from "react-native-vector-icons/Ionicons";
+import { DatePicker } from "react-native-wheel-pick";
 
-export default function ProfileSetupScreen({ navigation }) {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
+const Profilesetup = (props) => {
+  const [gender, setGender] = useState("Male");
+  const [showGender, setShowGender] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date("2018-06-27")
+  );
 
-  const handleContinue = () => {
-    navigation.navigate('AuthStack', { screen: 'MoodSelection' });
-  };
+  const genderOptions = [
+    "Male",
+    "Female",
+    "Non-binary",
+    "Prefer not to say",
+    "Other",
+  ];
 
   return (
-    <ScreenWrapper>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.container}>
-            <AuthHeader
-              title="Set Up Profile"
-              subtitle="Complete your basic details to personalize your Planet Care experience."
-            />
+    <View style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
+      
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-            <View style={styles.avatarSection}>
-              <TouchableOpacity activeOpacity={0.8} style={styles.avatarCircle}>
-                <Text style={styles.avatarPlus}>+</Text>
-              </TouchableOpacity>
-              <Text style={styles.avatarText}>Upload Profile Photo</Text>
-            </View>
+        {/* ✅ HEADER WITH WHITE BACKGROUND */}
+        <View style={{ backgroundColor: "#FFFFFF", paddingBottom: 20 }}>
+          
+          {/* Back Button */}
+          <TouchableOpacity
+            onPress={() => props.navigation.goBack()}
+            style={{ marginTop: 20, marginLeft: 15 }}
+          >
+            <Icons name="arrow-back" size={22} color="black" />
+          </TouchableOpacity>
 
-            <CustomInput
-              label="Full Name"
-              placeholder="Enter your full name"
-              value={fullName}
-              onChangeText={setFullName}
-              autoCapitalize="words"
-            />
+          {/* Header */}
+          <Text style={{
+            textAlign: "center",
+            fontSize: 28,
+            fontWeight: "bold",
+            marginTop: 10,
+          }}>
+            Profile Setup
+          </Text>
 
-            <CustomInput
-              label="Email"
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
+          <Text style={{
+            textAlign: "center",
+            fontSize: 14,
+            marginTop: 5,
+            fontWeight: "500",
+          }}>
+            Set up your profile
+          </Text>
+        </View>
 
-            <CustomInput
-              label="Phone Number"
-              placeholder="Enter your phone number"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
-            />
+        {/* FORM CARD */}
+        <View style={{
+          backgroundColor: "white",
+          
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          padding: 20,
+        }}>
 
-            <View style={styles.row}>
-              <View style={styles.halfWidth}>
-                <CustomInput
-                  label="Age"
-                  placeholder="Age"
-                  value={age}
-                  onChangeText={setAge}
-                  keyboardType="number-pad"
-                />
-              </View>
+          {/* Full Name */}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name="user" size={14} />
+            <Text style={{ marginLeft: 8, fontWeight: "bold" }}>
+              Full Name
+            </Text>
+          </View>
 
-              <View style={styles.halfWidth}>
-                <CustomInput
-                  label="Gender"
-                  placeholder="Gender"
-                  value={gender}
-                  onChangeText={setGender}
-                  autoCapitalize="words"
-                />
-              </View>
-            </View>
+          <TextInput
+            placeholder="Daniel Park"
+            style={{
+              borderBottomWidth: 1,
+              borderColor: "#D9D9D9",
+              marginBottom: 20,
+            }}
+          />
 
-            <CustomButton
-              title="Continue"
-              onPress={handleContinue}
-              style={styles.button}
+          {/* Email */}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name="envelope" size={14} />
+            <Text style={{ marginLeft: 8, fontWeight: "bold" }}>
+              Email
+            </Text>
+          </View>
+
+          <TextInput
+            placeholder="example@gmail.com"
+            keyboardType="email-address"
+            style={{
+              borderBottomWidth: 1,
+              borderColor: "#D9D9D9",
+              marginBottom: 20,
+            }}
+          />
+
+          {/* Age */}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name="calendar" size={14} color="#333" />
+            <Text style={{ marginLeft: 8, fontWeight: "600", fontSize: 14 }}>
+              Age
+            </Text>
+          </View>
+
+          <View style={{
+            marginTop: 12,
+            marginBottom: 20,
+            alignItems: "center",
+            backgroundColor: "#F4F4F4",
+            borderRadius: 16,
+            paddingVertical: 8,
+            paddingHorizontal: 10,
+          }}>
+            <DatePicker
+              style={{ height: 180, width: 300 }}
+              date={selectedDate}
+              mode="date"
+              minimumDate={new Date("2000-01-01")}
+              maximumDate={new Date("3000-12-31")}
+              textColor="#000"
+              fadeToColor="#F4F4F4"
+              androidMode="spinner"
+              onDateChange={(date) => setSelectedDate(date)}
             />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </ScreenWrapper>
-  );
-}
 
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#07132A',
-    paddingHorizontal: 24,
-    paddingTop: 36,
-    paddingBottom: 24,
-  },
-  avatarSection: {
-    alignItems: 'center',
-    marginBottom: 26,
-  },
-  avatarCircle: {
-    width: 108,
-    height: 108,
-    borderRadius: 54,
-    backgroundColor: '#1B2147',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  avatarPlus: {
-    color: colors.white,
-    fontSize: 34,
-    fontWeight: '400',
-    lineHeight: 38,
-  },
-  avatarText: {
-    color: 'rgba(255,255,255,0.72)',
-    fontSize: 14,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  halfWidth: {
-    width: '48%',
-  },
-  button: {
-    marginTop: 10,
-  },
-});
+          {/* Gender Dropdown */}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name="venus-mars" size={14} />
+            <Text style={{ marginLeft: 8, fontWeight: "bold" }}>
+              Gender (Optional)
+            </Text>
+          </View>
+
+          <View style={{ marginTop: 10 }}>
+            <TouchableOpacity
+              onPress={() => setShowGender(!showGender)}
+              style={{
+                borderWidth: 1,
+                borderColor: "#E0E0E0",
+                borderRadius: 10,
+                paddingHorizontal: 15,
+                paddingVertical: 14,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                backgroundColor: "#FAFAFA",
+              }}
+            >
+              <Text style={{ color: "#333", fontSize: 14 }}>
+                {gender}
+              </Text>
+
+              <Icons
+                name={showGender ? "chevron-up-outline" : "chevron-down-outline"}
+                size={20}
+                color="#999"
+              />
+            </TouchableOpacity>
+
+            {showGender && (
+              <View style={{
+                borderWidth: 1,
+                borderColor: "#E0E0E0",
+                borderRadius: 10,
+                marginTop: 5,
+                backgroundColor: "#fff",
+              }}>
+                {genderOptions.map((item, index) => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => {
+                      setGender(item);
+                      setShowGender(false);
+                    }}
+                    style={{
+                      paddingVertical: 14,
+                      paddingHorizontal: 15,
+                      borderBottomWidth: index !== genderOptions.length - 1 ? 1 : 0,
+                      borderBottomColor: "#eee",
+                    }}
+                  >
+                    <Text style={{ fontSize: 14 }}>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
+
+          {/* Next Button */}
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("ProfileSetup2")}
+            style={{
+              alignSelf: "center",
+              marginTop: 40,
+              marginBottom: 20,
+            }}
+          >
+            <Image
+              source={require("../../assets/images/yellow.png")}
+              style={{
+                height: 60,
+                width: 60,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
+
+export default Profilesetup;

@@ -169,7 +169,7 @@ const Interests = (props) => {
         );
       })}
 
-          <TouchableOpacity onPress={() => props.navigation.navigate('Interests')}
+          <TouchableOpacity onPress={() => props.navigation.navigate('ProfileSetup')}
         
                 style={{
         

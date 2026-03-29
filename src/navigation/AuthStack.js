@@ -8,6 +8,8 @@ import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import VerifyCodeScreen from '../screens/auth/VerifyCodeScreen';
 import NewPasswordScreen from '../screens/auth/NewPasswordScreen';
 import ProfileSetupScreen from '../screens/profile/ProfileSetupScreen';
+import ProfileSetupScreen2 from '../screens/profile/ProfileSetupScreen2';
+
 import MoodSelectionScreen from '../screens/profile/MoodSelectionScreen';
 import InterestSelectionScreen from '../screens/profile/InterestSelectionScreen';
 
@@ -23,6 +25,7 @@ export default function AuthStack() {
       <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
       <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
       <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
+      <Stack.Screen name="ProfileSetup2" component={ProfileSetupScreen2} /> 
       <Stack.Screen name="MoodSelection" component={MoodSelectionScreen} />
       <Stack.Screen
         name="InterestSelection"component={InterestSelectionScreen}

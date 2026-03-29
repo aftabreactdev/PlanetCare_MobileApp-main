@@ -17,8 +17,8 @@ export default function MainStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MainTabs" component={MainTabs} />
       <Stack.Screen name="AddJournal" component={AddJournalScreen} />
-      {/* <Stack.Screen name="Pods" component={PodsScreen} />
-      <Stack.Screen name="PodDetails" component={PodDetailsScreen} /> */}
+      <Stack.Screen name="Pods" component={PodsScreen} />
+      <Stack.Screen name="PodDetails" component={PodDetailsScreen} />
       <Stack.Screen name="Shop" component={ShopScreen} />
       <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
       <Stack.Screen name="Cart" component={CartScreen} />
