@@ -321,7 +321,7 @@ const SignupScreen = (props) => {
           <View
             style={{
               backgroundColor: "white",
-              height: H("85%"),
+              height: H("95%"),
               width: W("100%"),
               position: "absolute",
               top: H("22%"),

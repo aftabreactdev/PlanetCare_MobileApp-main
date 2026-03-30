@@ -6,10 +6,10 @@ import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-nativ
 import images from "../../constants/images";
 const Welcomescreen = (props) => {
    return (
-      <View>
+      <View style={{ flex: 1 }}>
 
          <Image source={require("../../assets/images/Splashbackground.jpg")}
-            style={{ height: 700, width: 400 }}
+            style={{ height: H('100%'), width: W('100%') }}
          />
 
 
@@ -20,16 +20,16 @@ const Welcomescreen = (props) => {
                "rgba(160, 80, 220, 0.2)",
                "rgba(200, 120, 255, 0.0)",
             ]}
-            stops={[0.1, 0.4, 0.8, 1]}
-            center={[200, 200]}
-            radius={200}
+            stops={[0.2, 0.6, 0.8, 1]}
+            center={[W('50%'), H('50%')]}
+            radius={W('60%')}
             style={{
                position: "absolute",
-               top: 150,
+               top: H('10%'),
                alignSelf: "center",
                width: W('100%'),
                height: H('40%'),
-               borderRadius: H('40%'),
+               // borderRadius: H('40%'),
                opacity: 0.8,
             }}
          />
@@ -55,28 +55,28 @@ const Welcomescreen = (props) => {
                top: H('50%'),
                width: W('100%'),
                height: H('60%'),
-               borderRadius: 30,
+               borderRadius: H('4%'),
                alignSelf: "center",
                alignItems: "center",
                justifyContent: "center",
                zIndex: 3,
-               paddingHorizontal: 10,
+               paddingHorizontal: W('3%'),
             }}
          >
 
             <Text
                style={{
                   fontFamily: "Montserrat-Black",
-                  fontWeight: "900",
-                  fontSize: 40,
+                  fontWeight: "700",
+                  fontSize: H('5%'),
                   textAlign: "center",
-                  lineHeight: 46.6,
+                  lineHeight: H('6%'),
                   color: "#030303",
-                  marginBottom: 15,
-                  bottom: 35,
+                  marginBottom: H('2%'),
+                  bottom: H('4%'),
                }}
             >
-               Welcome to PLANET{" "}
+               Welcome to{"\n"} PLANET{" "}
                <Text
                   style={{
                      color: "rgba(0,135,218,1)",
@@ -95,8 +95,8 @@ const Welcomescreen = (props) => {
                style={{
                   fontFamily: "Montserrat-Black",
                   fontWeight: "700",
-                  fontSize: 20,
-                  bottom: 40,
+                  fontSize: H('2.5%'),
+                  bottom: H('5%'),
                   fontStyle: "italic",
                }}
             >
@@ -106,9 +106,9 @@ const Welcomescreen = (props) => {
                style={{
                   fontFamily: "Montserrat-Black",
                   fontWeight: "700",
-                  fontSize: 20,
+                  fontSize: H('2.5%'),
                   fontStyle: "italic",
-                  bottom: 35,
+                  bottom: H('4%'),
                }}
             >
                wellbeing
@@ -120,7 +120,7 @@ const Welcomescreen = (props) => {
                <View>
 
 
-                  <Image source={require("../../assets/images/yellow.png")} style={{ height: H('7%'), width: W('13%'), alignSelf: "center", bottom: 20 }} />
+                  <Image source={require("../../assets/images/yellow.png")} style={{ height: H('7%'), width: W('13%'), alignSelf: "center", bottom: H('2.5%') }} />
 
 
                </View>

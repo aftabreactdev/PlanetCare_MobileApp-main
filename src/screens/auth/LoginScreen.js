@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Text, View, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import RadialGradient from "react-native-radial-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
 
 const Login1 = (props) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -65,16 +66,16 @@ const Login1 = (props) => {
         }
 
         Alert.alert("Success", "Login Successful!");
-      props.navigation.navigate("MainTabs", {
-    screen: "Home"
-});
+        props.navigation.navigate("MainTabs", {
+            screen: "Home"
+        });
     };
 
     return (
-        <View>
+        <View style={{ flex: 1, }}>
             <Image
                 source={require("../../assets/images/Splashbackground.jpg")}
-                style={{ height: 700, width: 400 }}
+                style={{ height: H("100%"), width: W("100%") }}
             />
 
             <RadialGradient
@@ -89,11 +90,11 @@ const Login1 = (props) => {
                 radius={200}
                 style={{
                     position: "absolute",
-                    top: 150,
+                    top: H("15%"),
                     alignSelf: "center",
-                    width: 400,
-                    height: 400,
-                    borderRadius: 200,
+                    width: W("100%"),
+                    height: H("45%"),
+                    borderRadius: H("20%"),
                 }}
             />
 
@@ -101,7 +102,7 @@ const Login1 = (props) => {
             <Text style={{
                 color: "white",
                 position: "absolute",
-                top: 60,
+                top: H("15%"),
                 alignSelf: "center",
                 fontSize: 40,
                 fontWeight: "bold",
@@ -112,20 +113,41 @@ const Login1 = (props) => {
             <Text style={{
                 color: "white",
                 position: "absolute",
-                top: 110,
+                top: H("25%"),
                 fontSize: 25,
                 alignSelf: "center",
             }}>
                 Hi Welcome back,
             </Text>
+            <Text style={{
+                color: "white",
+                position: "absolute",
+                top: H("29%"),
+                fontSize: 25,
+                alignSelf: "center",
+            }}>
+                you’ve been
+            </Text>
+            <Text style={{
+                color: "white",
+                position: "absolute",
+                top: H("33%"),
+                fontSize: 25,
+                alignSelf: "center",
+                fontStyle: "italic",
+            }}>
+                missed
+            </Text>
 
             {/* Card */}
             <View style={{
                 backgroundColor: "white",
-                height: 450,
-                width: 360,
+                height: H("70%"),
+                width: W("100%"),
+                alignSelf: "center",
+
                 position: "absolute",
-                top: 250,
+                top: H("40%"),
                 borderRadius: 30,
                 paddingTop: 20,
             }}>
@@ -138,7 +160,7 @@ const Login1 = (props) => {
                 </Text>
 
                 {/* Email */}
-                <View style={{ marginTop: 40, paddingHorizontal: 20 }}>
+                <View style={{ marginTop: 10, paddingHorizontal: 20 }}>
                     <Text style={{ fontWeight: "bold" }}>Email</Text>
 
                     <View style={{
@@ -166,7 +188,7 @@ const Login1 = (props) => {
                 </View>
 
                 {/* Password */}
-                <View style={{ marginTop: 30, paddingHorizontal: 20 }}>
+                <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
                     <Text style={{ fontWeight: "bold" }}>Password</Text>
 
                     <View style={{
@@ -212,15 +234,17 @@ const Login1 = (props) => {
                     disabled={!isFormValid}
                     onPress={handleLogin}
                     style={{
-                        marginTop: 30,
+                        marginTop: 10,
                         alignSelf: "center",
                         opacity: isFormValid ? 1 : 0.5,
                     }}
                 >
                     <Text style={{
                         backgroundColor: "gold",
-                        paddingVertical: 8,
-                        paddingHorizontal: 50,
+                        height: H('5%'),
+                        width: W('70%'),
+                        textAlign: "center",
+                        textAlignVertical: "center",
                         borderRadius: 10,
                         fontWeight: "bold",
                     }}>
@@ -229,22 +253,110 @@ const Login1 = (props) => {
                 </TouchableOpacity>
             </View>
 
-            {/* Signup */}
-            <View style={{
-                position: "absolute",
-                bottom: 30,
-                flexDirection: "row",
-                alignSelf: "center",
-            }}>
-                <Text style={{ color: "#ccc" }}>
-                    Don’t have an account? 
-                </Text>
-                <TouchableOpacity onPress={() => props.navigation.navigate("Signup")}>
-                    <Text style={{ color: "#0099ff", marginLeft: 5 }}>
-                        Sign Up
+
+
+            {/* Divider */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    // marginTop: 20,
+                    width: 200,
+                    alignSelf: "center",
+                    position: "absolute",
+                    top: H('85%'),
+                }}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        height: 1,
+                        backgroundColor: "rgba(217, 217, 217, 1)",
+                        marginHorizontal: 10,
+                    }}
+                />
+                <Text style={{ color: "gray", fontSize: 12 }}>or login with</Text>
+                <View
+                    style={{
+                        flex: 1,
+                        height: 1,
+                        backgroundColor: "rgba(217, 217, 217, 1)",
+                        marginHorizontal: 10,
+                    }}
+                />
+            </View>
+
+            
+
+            {/* Social Icons */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: 15,
+                    marginTop: 25,
+                    position: "absolute",
+                    top: H('85%'),
+                    alignSelf: "center",
+                }}
+            >
+                <TouchableOpacity onPress={() => {
+                    // Handle Google login
+                    Alert.alert("Google login", "Coming soon!");
+                }}>
+                    <Image
+                        source={require("../../assets/icons/google.png")}
+                        style={{ height: 20, width: 20 }}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    // Handle Facebook login
+                    Alert.alert("Facebook login", "Coming soon!");
+                }}>
+                    <Image
+                        source={require("../../assets/icons/facebook.png")}
+                        style={{ height: 20, width: 20 }}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    // Handle Apple login
+                    Alert.alert("Apple login", "Coming soon!");
+                }}>
+                    <Image
+                        source={require("../../assets/icons/apple.png")}
+                        style={{ height: 20, width: 20 }}
+                    />
+                </TouchableOpacity>
+            </View>
+
+            {/* Footer */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    marginTop: 20,
+                    marginBottom: 20,
+                    position: "absolute",
+                    bottom: 0,
+                    alignSelf: "center",
+                }}
+            >
+                <Text style={{ color: "gray", opacity: 0.7 }}>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Signup')}>
+                    <Text
+                        style={{
+                            color: "rgba(0, 153, 255, 1)",
+                            fontSize: 11,
+                            textDecorationLine: "underline",
+                        }}
+                    >
+                        sign up
                     </Text>
                 </TouchableOpacity>
             </View>
+
+
         </View>
     );
 };

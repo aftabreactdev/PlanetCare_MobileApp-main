@@ -16,7 +16,7 @@ import ActivityItem from "../../components/homedashboad2/ActivityItem";
 import RecommendationCard from "../../components/homedashboad2/RecommendationCard";
 import ActionButtons from "../../components/maindashboard/ActionButtons";
 
-const DailySnapshot = () => {
+const DailySnapshot = ({ navigation }) => {  // ← FIX: Added navigation prop
   // Data for activities with individual styles
   const activities = [
     {
@@ -27,8 +27,7 @@ const DailySnapshot = () => {
       subtitle: "Daily emotion track",
       time: "08:00 AM",
       date: "July 20",
-      titleStyle: { right: 10
-       },
+      titleStyle: { right: 10 },
       subtitleStyle: { marginRight: 25 },
     },
     {
@@ -39,7 +38,7 @@ const DailySnapshot = () => {
       subtitle: "I wrote about my۔۔۔۔",
       time: "00:00 AM",
       date: "July 20",
-      titleStyle: {  right: 40 },
+      titleStyle: { right: 40 },
       subtitleStyle: { marginRight: 25 },
     },
     {
@@ -50,7 +49,7 @@ const DailySnapshot = () => {
       subtitle: "Meditation, Reading",
       time: "00:00 AM",
       date: "July 20",
-      titleStyle: {  right: 40 },
+      titleStyle: { right: 40 },
       subtitleStyle: { marginRight: 25 },
     },
   ];
@@ -70,7 +69,7 @@ const DailySnapshot = () => {
       icon: require("../../assets/icons/v.png"),
       title: "Suggested journal prompt:",
       description: "What is something I need to let go of?",
-      titleStyle: {  right: 20 },
+      titleStyle: { right: 20 },
       descriptionStyle: { marginTop: 5 },
     },
     {
@@ -78,7 +77,7 @@ const DailySnapshot = () => {
       icon: require("../../assets/icons/v.png"),
       title: "Emily S.",
       description: "What is something I need to let go of?",
-      titleStyle: {  right: 60 },
+      titleStyle: { right: 60 },
       descriptionStyle: { left: 10 },
     },
   ];
@@ -104,6 +103,10 @@ const DailySnapshot = () => {
     // Add your navigation or logic here
   };
 
+  const handleBackPress = () => {
+    navigation.goBack();  // ← Use navigation prop
+  };
+
   return (
     <LinearGradient
       colors={["rgba(0, 11, 36, 1)", "rgba(4, 84, 204, 1)"]}
@@ -111,13 +114,14 @@ const DailySnapshot = () => {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
 
-         {/* Back Button */}
+        {/* Back Button */}
         <TouchableOpacity
-          onPress={() => props.navigation.goBack()}
-          style={{ top: 30, marginLeft: 15 }}
+          onPress={handleBackPress}  // ← FIX: Use the handler function
+          style={{ top: 30, marginLeft: 15, zIndex: 1 }}  // ← Added zIndex to ensure button is clickable
         >
-          <Icons name="arrow-back" size={22} color="#fff"  />
+          <Icons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
+        
         {/* Header Component */}
         <Header
           title="Daily Snapshot"

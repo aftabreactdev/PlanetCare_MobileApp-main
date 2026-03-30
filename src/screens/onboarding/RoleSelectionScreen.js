@@ -26,7 +26,7 @@ const RoleSelection = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <Image
         source={require("../../assets/images/Splashbackground.jpg")}
-        style={{ height: "100%", width: "100%", position: "absolute" }}
+        style={{ height: H('100%'), width: W('100%'), position: "absolute", resizeMode: "cover" }}
       />
 
       <View
@@ -34,19 +34,19 @@ const RoleSelection = ({ navigation }) => {
           backgroundColor: "white",
           position: "absolute",
           height: H(40),
-          width: "100%",
+          width: W('100%'),
           alignSelf: "center",
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
+          borderBottomLeftRadius: H('2.5%'),
+          borderBottomRightRadius: H('2.5%'),
         }}
       >
         <Text
           style={{
-            fontSize: 25,
+            fontSize: H('3%'),
             fontWeight: "900",
             fontStyle: "italic",
             alignSelf: "center",
-            marginTop: 25,
+            marginTop: H('3%'),
           }}
         >
           How are you using
@@ -54,7 +54,7 @@ const RoleSelection = ({ navigation }) => {
 
         <Text
           style={{
-            fontSize: 25,
+            fontSize: H('3%'),
             fontWeight: "900",
             fontStyle: "italic",
             alignSelf: "center",
@@ -70,15 +70,15 @@ const RoleSelection = ({ navigation }) => {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              marginTop: 10,
-              marginLeft: 40,
+              marginTop: H('1.5%'),
+              marginLeft: W('10%'),
             }}
           >
             <View
               style={{
-                width: 15,
-                height: 15,
-                borderRadius: 7.5,
+                width: H('2%'),
+                height: H('2%'),
+                borderRadius: H('1%'),
                 borderWidth: 0.6,
                 borderColor: "gray",
                 backgroundColor:
@@ -87,22 +87,22 @@ const RoleSelection = ({ navigation }) => {
                     : "white",
                 justifyContent: "center",
                 alignItems: "center",
-                marginRight: 15,
+                marginRight: W('4%'),
               }}
             >
               {selectedOption === option.value && (
                 <View
                   style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
+                    width: H('1.3%'),
+                    height: H('1.3%'),
+                    borderRadius: H('0.65%'),
                     backgroundColor: "rgba(255, 215, 0, 1)",
                   }}
                 />
               )}
             </View>
 
-            <Text>{option.label}</Text>
+            <Text style={{ fontSize: H('2%') }}>{option.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -117,7 +117,7 @@ const RoleSelection = ({ navigation }) => {
       >
         <Image
           source={require("../../assets/images/yellow.png")}
-          style={{ height: 50, width: 50 }}
+          style={{ height: H('6%'), width: W('12%'), resizeMode: "contain" }}
         />
       </TouchableOpacity>
 
@@ -129,15 +129,15 @@ const RoleSelection = ({ navigation }) => {
           "rgba(200, 120, 255, 0.0)",
         ]}
         stops={[0.1, 0.4, 0.8, 1]}
-        center={[200, 200]}
-        radius={200}
+        center={[W('50%'), H('55%')]}
+        radius={W('60%')}
         style={{
           position: "absolute",
-          top: 450,
+          top: H('50%'),
           alignSelf: "center",
-          width: 400,
-          height: 400,
-          borderRadius: 200,
+          width: W('100%'),
+          height: W('100%'),
+          borderRadius: W('50%'),
           opacity: 0.9,
         }}
       />
@@ -145,12 +145,13 @@ const RoleSelection = ({ navigation }) => {
       <Image
         source={require("../../assets/images/greenplante.png")}
         style={{
-          height: 250,
-          width: 250,
+          height: H('55%'),
+          width: W('70%'),
           position: "absolute",
-          top: 300,
+          top: H('40%'),
           alignSelf: "center",
           zIndex: 2,
+          resizeMode: "contain",
         }}
       />
     </View>
