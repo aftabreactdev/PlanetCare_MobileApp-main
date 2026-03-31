@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
 
 const Newpassword = (props) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,149 +34,166 @@ const Newpassword = (props) => {
   };
 
   return (
-    <View>
-      {/* Heading */}
-      <Text
-        style={{
-          fontWeight: "900",
-          fontSize: 25,
-          marginTop: 20,
-          alignSelf: "center",
-        }}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "white" }}
+    >
+      <ScrollView 
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        showsVerticalScrollIndicator={false}
       >
-        Create New Password
-      </Text>
-
-      {/* Lock Circle */}
-      <View
-        style={{
-          backgroundColor: "rgba(218, 228, 253, 1)",
-          height: 160,
-          width: 160,
-          borderRadius: 80,
-          top: 30,
-          alignSelf: "center",
-        }}
-      >
-        <Image
-          source={require("../../assets/icons/lock.png")}
-          style={{
-            position: "absolute",
-            height: 120,
-            width: 120,
-            alignSelf: "center",
-            top: 20,
-          }}
-        />
-        <Icon
-          name="check"
-          size={14}
-          color="white"
-          style={{
-            backgroundColor: "rgba(103, 111, 116, 1)",
-            height: 25,
-            width: 25,
-            borderRadius: 13,
-            textAlign: "center",
-            textAlignVertical: "center",
-            position: "absolute",
-            top: 100,
-            left: 90,
-          }}
-        />
-      </View>
-
-      {/* Info */}
-      <View style={{ alignItems: "center", marginTop: 60 }}>
-        <Text>Your new password must be</Text>
-        <Text>different from previously</Text>
-        <Text>used password</Text>
-      </View>
-
-      {/* Password */}
-      <View style={{ alignItems: "center", marginTop: 20 }}>
-        <Text style={{ right: 50 }}>New Password</Text>
-
-        <View
-          style={{
-            flexDirection: "row",
-            borderBottomWidth: 1,
-            width: 200,
-          }}
-        >
-          <TextInput
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              setError("");
+        <View style={{ paddingVertical: H("5%"), paddingHorizontal: W("5%") }}>
+          {/* Heading */}
+          <Text
+            style={{
+              fontWeight: "900",
+              fontSize: Math.min(25, W("7%")),
+              marginTop: H("2%"),
+              alignSelf: "center",
+              bottom: H("8%"),
             }}
-            placeholder="Enter password"
-            secureTextEntry={!showPassword}
-            style={{ flex: 1 }}
-          />
-
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Icon name={showPassword ? "eye-slash" : "eye"} size={13} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Confirm Password */}
-      <View style={{ alignItems: "center", marginTop: 20 }}>
-        <Text style={{ right: 50 }}>Confirm Password</Text>
-
-        <View
-          style={{
-            flexDirection: "row",
-            borderBottomWidth: 1,
-            width: 200,
-          }}
-        >
-          <TextInput
-            value={confirmPassword}
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-              setError("");
-            }}
-            placeholder="Confirm password"
-            secureTextEntry={!showconfirmPassword}
-            style={{ flex: 1 }}
-          />
-
-          <TouchableOpacity
-            onPress={() => setShowconfirmPassword(!showconfirmPassword)}
           >
-            <Icon name={showconfirmPassword ? "eye-slash" : "eye"} size={13} />
+            Create New Password
+          </Text>
+
+          {/* Lock Circle */}
+          <View
+            style={{
+              backgroundColor: "rgba(218, 228, 253, 1)",
+              height: Math.min(160, W("40%")),
+              width: Math.min(160, W("40%")),
+              borderRadius: Math.min(80, W("20%")),
+              marginTop: H("5%"),
+              alignSelf: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              bottom: H("10%"),
+            }}
+          >
+            <Image
+              source={require("../../assets/icons/lock.png")}
+              style={{
+                position: "absolute",
+                height: Math.min(180, W("50%")),
+                width: Math.min(180, W("50%")),
+                alignSelf: "center",
+                bottom: H("0%"),
+              }}
+              resizeMode="contain"
+            />
+            <Icon
+              name="check"
+              size={Math.min(14, W("4%"))}
+              color="white"
+              style={{
+                backgroundColor: "rgba(103, 111, 116, 1)",
+                height: Math.min(25, W("7%")),
+                width: Math.min(25, W("7%")),
+                borderRadius: Math.min(13, W("3.5%")),
+                textAlign: "center",
+                textAlignVertical: "center",
+                position: "absolute",
+                bottom: "27%",
+                right: "25%",
+              }}
+            />
+          </View>
+
+          {/* Info */}
+          <View style={{ alignItems: "center", marginTop: H("5%") ,bottom: H("10%")}}>
+            <Text style={{ fontSize: Math.min(14, W("4%")) }}>Your new password must be</Text>
+            <Text style={{ fontSize: Math.min(14, W("4%")), marginTop: H("0.3%") }}>different from previously</Text>
+            <Text style={{ fontSize: Math.min(14, W("4%")), marginTop: H("0.3%") }}>used password</Text>
+          </View>
+
+          {/* Password */}
+          <View style={{ alignItems: "center", marginTop: H("4%"),bottom: H("10%") }}>
+            <Text style={{ right: W("12%"), fontSize: Math.min(14, W("4%")) }}>New Password</Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                borderBottomWidth: 1,
+                width: W("55%"),
+                borderColor: "rgba(217, 217, 217, 1)",
+              }}
+            >
+              <TextInput
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setError("");
+                }}
+                placeholder="Enter password"
+                secureTextEntry={!showPassword}
+                style={{ flex: 1, fontSize: Math.min(13, W("3.5%")), paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%") }}
+              />
+
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Icon name={showPassword ? "eye-slash" : "eye"} size={Math.min(13, W("3.5%"))} style={{ marginRight: W("2%") }} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Confirm Password */}
+          <View style={{ alignItems: "center", marginTop: H("3%"),bottom: H("10%") }}>
+            <Text style={{ right: W("12%"), fontSize: Math.min(14, W("4%")) }}>Confirm Password</Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                borderBottomWidth: 1,
+                width: W("55%"),
+                borderColor: "rgba(217, 217, 217, 1)",
+              }}
+            >
+              <TextInput
+                value={confirmPassword}
+                onChangeText={(text) => {
+                  setConfirmPassword(text);
+                  setError("");
+                }}
+                placeholder="Confirm password"
+                secureTextEntry={!showconfirmPassword}
+                style={{ flex: 1, fontSize: Math.min(13, W("3.5%")), paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%") }}
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowconfirmPassword(!showconfirmPassword)}
+              >
+                <Icon name={showconfirmPassword ? "eye-slash" : "eye"} size={Math.min(13, W("3.5%"))} style={{ marginRight: W("2%") }} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Error Message */}
+          {error ? (
+            <Text style={{ color: "red", alignSelf: "center", marginTop: H("2%"), fontSize: Math.min(12, W("3.5%")) }}>
+              {error}
+            </Text>
+          ) : null}
+
+          {/* Button */}
+          <TouchableOpacity style={{ marginTop: H("4%") }} onPress={handleSave}>
+            <Text
+              style={{
+                backgroundColor: "rgba(255, 236, 135, 1)",
+                height: Math.max(30, H("5%")),
+                width: Math.min(200, W("70%")),
+                borderRadius: 10,
+                textAlignVertical: "center",
+                textAlign: "center",
+                fontSize: Math.min(13, W("3.5%")),
+                fontWeight: "bold",
+                alignSelf: "center",
+              }}
+            >
+              Save Password
+            </Text>
           </TouchableOpacity>
         </View>
-      </View>
-
-      {/* ❌ Error Message */}
-      {error ? (
-        <Text style={{ color: "red", alignSelf: "center", marginTop: 15 }}>
-          {error}
-        </Text>
-      ) : null}
-
-      {/* Button */}
-      <TouchableOpacity style={{ top: 30 }} onPress={handleSave}>
-        <Text
-          style={{
-            backgroundColor: "rgba(255, 236, 135, 1)",
-            height: 30,
-            width: 200,
-            borderRadius: 10,
-            textAlignVertical: "center",
-            textAlign: "center",
-            fontSize: 13,
-            fontWeight: "bold",
-            alignSelf: "center",
-          }}
-        >
-          Save Password
-        </Text>
-      </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
