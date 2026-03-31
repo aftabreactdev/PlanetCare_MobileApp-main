@@ -287,7 +287,7 @@ const Login1 = (props) => {
                 />
             </View>
 
-            
+
 
             {/* Social Icons */}
             <View

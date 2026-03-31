@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Image, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { Text, View, Image, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import RadialGradient from "react-native-radial-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -160,15 +160,6 @@ const CompanyAdmin = (props) => {
         
         try {
             // Simulate API call
-            // const response = await api.signUp({
-            //     fullName,
-            //     companyName,
-            //     companyEmail,
-            //     companySize,
-            //     password,
-            // });
-            
-            // Simulate network delay
             await new Promise(resolve => setTimeout(resolve, 1500));
             
             // Success - navigate to next screen
@@ -192,476 +183,497 @@ const CompanyAdmin = (props) => {
     };
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-            <View>
-                <Image source={require("../../assets/images/Splashbackground.jpg")}
-                    style={{ height: 700, width: 400 }}
-                />
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1, backgroundColor: '#fff' }}
+        >
+            <ScrollView 
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ flexGrow: 1 }}
+                style={{ flex: 1, backgroundColor: '#fff' }}
+            >
+                <View style={{ flex: 1 }}>
+                    <Image 
+                        source={require("../../assets/images/Splashbackground.jpg")}
+                        style={{ height: H("100%"), width: W("100%") }}
+                        resizeMode="cover"
+                    />
 
-                {/* Purple Glow */}
-                <RadialGradient
-                    colors={[
-                        "rgba(143, 0, 255, 1)",
-                        "rgba(143, 0, 250, 0.6)",
-                        "rgba(160, 80, 220, 0.2)",
-                        "rgba(200, 120, 255, 0.0)",
-                    ]}
-                    stops={[0.1, 0.6, 0.9, 1]}
-                    center={[200, 200]}
-                    radius={200}
-                    style={{
-                        position: "absolute",
-                        top: H("10%"),
-                        alignSelf: "center",
-                        width: W("100%"),
-                        height: H("100%"),
-                        borderRadius: H("20%"),
-                    }}
-                />
-                
-                <View style={{ flexDirection: "row", position: "absolute" }}>
-                    <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                        <Ionicons name="arrow-back" size={20} color="white" style={{ top: 20, left: 20 }} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Roleselection')}>
-                        <Entypo name="cross" size={20} color="white" style={{ top: 20, left: 300 }} />
-                    </TouchableOpacity>
-                </View>
+                    {/* Purple Glow */}
+                    <RadialGradient
+                              colors={[
+                                "rgba(143, 0, 255, 1)",
+                                "rgba(143, 0, 250, 0.6)",
+                                "rgba(160, 80, 220, 0.2)",
+                                "rgba(200, 120, 255, 0.0)",
+                              ]}
+                              stops={[0.1, 0.5, 0.7, 0.9]}
+                              center={[W("50%"), H("35%")]}
+                              radius={W("80%")}
+                              style={{
+                                position: "absolute",
+                                top: H("10%"),
+                                alignSelf: "center",
+                                width: W("100%"),
+                                height: H("100%"),
+                                borderRadius: H("20%"),
+                              }}
+                            />
+                    
+                    <View style={{ flexDirection: "row", position: "absolute", width: W("100%"), justifyContent: "space-between", paddingHorizontal: W("5%") }}>
+                        <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                            <Ionicons name="arrow-back" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Roleselection')}>
+                            <Entypo name="cross" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
+                        </TouchableOpacity>
+                    </View>
 
-                {/* Header */}
-                <Text
-                    style={{
-                        color: "white",
-                        position: "absolute",
-                        top: 40,
-                        alignSelf: "center",
-                        fontSize: 30,
-                        fontWeight: "bold",
-                    }}
-                >
-                    Create Account
-                </Text>
-
-                <Text
-                    style={{
-                        color: "white",
-                        position: "absolute",
-                        top: 90,
-                        alignSelf: "center",
-                        fontSize: 15,
-                        fontStyle: "italic",
-                        textAlign: "center",
-                    }}
-                >
-                    Set up your Company on {"\n"}Planet Care
-                </Text>
-
-                {/* White Form Card */}
-                <View
-                    style={{
-                        backgroundColor: "white",
-                        height: "auto",
-                        width: W("100%"),
-                        position: "absolute",
-                        top: H("23%"),
-                        borderRadius: 30,
-                        alignSelf: "center",
-                        paddingBottom: 30,
-                    }}
-                >
+                    {/* Header */}
                     <Text
                         style={{
-                            fontSize: 25,
+                            color: "white",
+                            position: "absolute",
+                            top: H("8%"),
                             alignSelf: "center",
-                            fontWeight: "900",
-                            marginTop: 20,
+                            fontSize: Math.min(30, W("8%")),
+                            fontWeight: "bold",
                         }}
                     >
-                        Sign Up
+                        Create Account
                     </Text>
 
-                    {/* Full Name */}
-                    <View style={{ marginTop: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                alignSelf: "center",
-                                width: W("70%"),
-                            }}
-                        >
-                            <Icon name="user" size={12} color="black" />
-                            <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 12 }}>Full Name</Text>
-                        </View>
-                        <TextInput
-                            style={{
-                                alignSelf: "center",
-                                borderBottomWidth: 1,
-                                borderColor: errors.fullName ? "red" : "rgba(217, 217, 217, 1)",
-                                width: W("70%"),
-                                fontSize: 13,
-                                bottom: 5,
-                                paddingVertical: 5,
-                            }}
-                            placeholder="Daniel Park"
-                            value={fullName}
-                            onChangeText={handleFullNameChange}
-                        />
-                        {errors.fullName ? (
-                            <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 2 }}>
-                                {errors.fullName}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    {/* Company Name */}
-                    <View style={{ marginTop: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                alignSelf: "center",
-                                width: W("70%"),
-                            }}
-                        >
-                            <Icon name="building-o" size={12} color="black" />
-                            <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 12 }}>Company Name</Text>
-                        </View>
-                        <TextInput
-                            style={{
-                                alignSelf: "center",
-                                borderBottomWidth: 1,
-                                borderColor: errors.companyName ? "red" : "rgba(217, 217, 217, 1)",
-                                width: W("70%"),
-                                fontSize: 13,
-                                bottom: 5,
-                                paddingVertical: 5,
-                            }}
-                            placeholder="Planet Care Inc."
-                            value={companyName}
-                            onChangeText={handleCompanyNameChange}
-                        />
-                        {errors.companyName ? (
-                            <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 2 }}>
-                                {errors.companyName}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    {/* Company Email */}
-                    <View style={{ marginTop: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                alignSelf: "center",
-                                width: W("70%"),
-                            }}
-                        >
-                            <Icon name="envelope" size={12} color="black" />
-                            <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 12 }}>Company Email</Text>
-                        </View>
-                        <TextInput
-                            style={{
-                                alignSelf: "center",
-                                borderBottomWidth: 1,
-                                borderColor: errors.companyEmail ? "red" : "rgba(217, 217, 217, 1)",
-                                width: W("70%"),
-                                fontSize: 13,
-                                bottom: 5,
-                                paddingVertical: 5,
-                            }}
-                            placeholder="example@gmail.com"
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            value={companyEmail}
-                            onChangeText={handleCompanyEmailChange}
-                        />
-                        {errors.companyEmail ? (
-                            <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 2 }}>
-                                {errors.companyEmail}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    {/* Company Size */}
-                    <View style={{ marginTop: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                alignSelf: "center",
-                                width: W("70%"),
-                            }}
-                        >
-                            <Ionicons name="people" size={12} color="black" />
-                            <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 12 }}>Company Size</Text>
-                        </View>
-                        <TextInput
-                            style={{
-                                alignSelf: "center",
-                                borderBottomWidth: 1,
-                                borderColor: errors.companySize ? "red" : "rgba(217, 217, 217, 1)",
-                                width: W("70%"),
-                                fontSize: 13,
-                                bottom: 5,
-                                paddingVertical: 5,
-                            }}
-                            placeholder="50-200"
-                            value={companySize}
-                            onChangeText={handleCompanySizeChange}
-                        />
-                        {errors.companySize ? (
-                            <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 2 }}>
-                                {errors.companySize}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    {/* Password */}
-                    <View style={{ marginTop: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                alignSelf: "center",
-                                width: W("70%"),
-                            }}
-                        >
-                            <Icon name="lock" size={12} color="black" />
-                            <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 13 }}>Set Password</Text>
-                        </View>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                borderBottomWidth: 1,
-                                borderColor: errors.password ? "red" : "rgba(217, 217, 217, 1)",
-                                width: W("70%"),
-                                alignSelf: "center",
-                            }}
-                        >
-                            <TextInput
-                                style={{
-                                    flex: 1,
-                                    paddingHorizontal: 5,
-                                    paddingVertical: 15,
-                                    fontSize: 13,
-                                }}
-                                placeholder="Enter password"
-                                secureTextEntry={!showPassword}
-                                value={password}
-                                onChangeText={handlePasswordChange}
-                            />
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <Icon
-                                    name={showPassword ? "eye-slash" : "eye"}
-                                    size={13}
-                                    color="#888"
-                                    style={{ marginRight: 8 }}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        {errors.password ? (
-                            <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 2 }}>
-                                {errors.password}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    {/* Confirm Password */}
-                    <View style={{ marginTop: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                alignSelf: "center",
-                                width: W("70%"),
-                            }}
-                        >
-                            <Icon name="lock" size={12} color="black" />
-                            <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 13 }}>Confirm Password</Text>
-                        </View>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                borderBottomWidth: 1,
-                                borderColor: errors.confirmPassword ? "red" : "rgba(217, 217, 217, 1)",
-                                width: W("70%"),
-                                alignSelf: "center",
-                            }}
-                        >
-                            <TextInput
-                                style={{
-                                    flex: 1,
-                                    paddingHorizontal: 5,
-                                    paddingVertical: 15,
-                                    fontSize: 13,
-                                }}
-                                placeholder="Confirm password"
-                                secureTextEntry={!showConfirmPassword}
-                                value={confirmPassword}
-                                onChangeText={handleConfirmPasswordChange}
-                            />
-                            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                <Icon
-                                    name={showConfirmPassword ? "eye-slash" : "eye"}
-                                    size={13}
-                                    color="#888"
-                                    style={{ marginRight: 8 }}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        {errors.confirmPassword ? (
-                            <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 2 }}>
-                                {errors.confirmPassword}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    {/* Terms & Conditions */}
-                    <View style={{
-                        flexDirection: "row",
-                        alignSelf: "center",
-                        marginTop: 15,
-                    }}>
-                        <TouchableOpacity
-                            onPress={handleTermsChange}
-                            style={{
-                                width: 15,
-                                height: 15,
-                                borderWidth: 1.5,
-                                borderColor: errors.terms ? "red" : "#555",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginRight: 4,
-                                borderRadius: 4,
-                            }}
-                        >
-                            {isChecked && (
-                                <Text style={{ textAlignVertical: "center", fontSize: 10, color: "white", backgroundColor: "rgba(143, 0, 255, 1)", width: 15, textAlign: "center", height: 15 }}>✔</Text>
-                            )}
-                        </TouchableOpacity>
-                        <Text style={{ fontSize: 13 }}>Agree with </Text>
-                        <TouchableOpacity>
-                            <Text style={{ color: "blue", textDecorationLine: "underline", fontSize: 13 }}>
-                                Terms & Conditions
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    {errors.terms ? (
-                        <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 5 }}>
-                            {errors.terms}
-                        </Text>
-                    ) : null}
-
-                    {/* Sign Up Button */}
-                    <TouchableOpacity
+                    <Text
                         style={{
+                            color: "white",
+                            position: "absolute",
+                            top: H("14%"),
                             alignSelf: "center",
-                            marginTop: 15,
-                            backgroundColor: "rgba(255, 215, 0, 1)",
-                            height: 35,
-                            width: 250,
-                            borderRadius: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            opacity: isLoading ? 0.7 : 1,
+                            fontSize: Math.min(15, W("4%")),
+                            fontStyle: "italic",
+                            textAlign: "center",
+                            paddingHorizontal: W("5%"),
                         }}
-                        onPress={handleSignUp}
-                        disabled={isLoading}
                     >
-                        <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                            {isLoading ? "Creating Account..." : "Sign Up"}
-                        </Text>
-                    </TouchableOpacity>
+                        Set up your Company on {"\n"}Planet Care
+                    </Text>
 
-                    {/* Divider */}
+                    {/* White Form Card */}
                     <View
                         style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
+                            backgroundColor: "white",
+                            height: H("95%"),
+                            width: W("100%"),
+                            position: "absolute",
+                            borderRadius: 30,
                             alignSelf: "center",
-                            marginTop: 15,
-                            width: 250,
+                            paddingBottom: H("0%"),
+                            top: H("20%"),
                         }}
                     >
-                        <View
+                        <Text
                             style={{
-                                flex: 1,
-                                height: 1,
-                                backgroundColor: "rgba(217, 217, 217, 1)",
-                                marginRight: 8,
+                                fontSize: Math.min(25, W("7%")),
+                                alignSelf: "center",
+                                fontWeight: "900",
+                                marginTop: H("3%"),
                             }}
-                        />
-                        <Text style={{ color: "gray", fontSize: 12, textAlign: "center" }}>
-                            or sign up with
+                        >
+                            Sign Up
                         </Text>
-                        <View
-                            style={{
-                                flex: 1,
-                                height: 1,
-                                backgroundColor: "rgba(217, 217, 217, 1)",
-                                marginLeft: 8,
-                            }}
-                        />
-                    </View>
 
-                    {/* Social Icons */}
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            gap: 15,
-                            marginTop: 15,
-                        }}
-                    >
-                        <TouchableOpacity>
-                            <Image
-                                source={require("../../assets/icons/google.png")}
-                                style={{ height: 20, width: 20 }}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image
-                                source={require("../../assets/icons/facebook.png")}
-                                style={{ height: 20, width: 20 }}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image
-                                source={require("../../assets/icons/apple.png")}
-                                style={{ height: 20, width: 20 }}
-                            />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Footer */}
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            marginTop: 15,
-                        }}
-                    >
-                        <Text style={{ color: "gray" }}>Already have an account? </Text>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('Login1')}>
-                            <Text
+                        {/* Full Name */}
+                        <View style={{ marginTop: H("2%") }}>
+                            <View
                                 style={{
-                                    color: "rgba(0, 153, 255, 1)",
-                                    fontSize: 11,
-                                    textDecorationLine: "underline",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    width: W("70%"),
                                 }}
                             >
-                                Login
+                                <Icon name="user" size={Math.min(12, W("3.5%"))} color="black" />
+                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Full Name</Text>
+                            </View>
+                            <TextInput
+                                style={{
+                                    alignSelf: "center",
+                                    borderBottomWidth: 1,
+                                    borderColor: errors.fullName ? "red" : "rgba(217, 217, 217, 1)",
+                                    width: W("70%"),
+                                    fontSize: Math.min(13, W("3.5%")),
+                                    bottom: H("0.5%"),
+                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
+                                }}
+                                placeholder="Daniel Park"
+                                value={fullName}
+                                onChangeText={handleFullNameChange}
+                            />
+                            {errors.fullName ? (
+                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
+                                    {errors.fullName}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        {/* Company Name */}
+                        <View style={{ marginTop: H("2%") }}>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    width: W("70%"),
+                                }}
+                            >
+                                <Icon name="building-o" size={Math.min(12, W("3.5%"))} color="black" />
+                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Company Name</Text>
+                            </View>
+                            <TextInput
+                                style={{
+                                    alignSelf: "center",
+                                    borderBottomWidth: 1,
+                                    borderColor: errors.companyName ? "red" : "rgba(217, 217, 217, 1)",
+                                    width: W("70%"),
+                                    fontSize: Math.min(13, W("3.5%")),
+                                    bottom: H("0.5%"),
+                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
+                                }}
+                                placeholder="Planet Care Inc."
+                                value={companyName}
+                                onChangeText={handleCompanyNameChange}
+                            />
+                            {errors.companyName ? (
+                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
+                                    {errors.companyName}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        {/* Company Email */}
+                        <View style={{ marginTop: H("2%") }}>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    width: W("70%"),
+                                }}
+                            >
+                                <Icon name="envelope" size={Math.min(12, W("3.5%"))} color="black" />
+                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Company Email</Text>
+                            </View>
+                            <TextInput
+                                style={{
+                                    alignSelf: "center",
+                                    borderBottomWidth: 1,
+                                    borderColor: errors.companyEmail ? "red" : "rgba(217, 217, 217, 1)",
+                                    width: W("70%"),
+                                    fontSize: Math.min(13, W("3.5%")),
+                                    bottom: H("0.5%"),
+                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
+                                }}
+                                placeholder="example@gmail.com"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                value={companyEmail}
+                                onChangeText={handleCompanyEmailChange}
+                            />
+                            {errors.companyEmail ? (
+                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
+                                    {errors.companyEmail}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        {/* Company Size */}
+                        <View style={{ marginTop: H("2%") }}>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    width: W("70%"),
+                                }}
+                            >
+                                <Ionicons name="people" size={Math.min(12, W("3.5%"))} color="black" />
+                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Company Size</Text>
+                            </View>
+                            <TextInput
+                                style={{
+                                    alignSelf: "center",
+                                    borderBottomWidth: 1,
+                                    borderColor: errors.companySize ? "red" : "rgba(217, 217, 217, 1)",
+                                    width: W("70%"),
+                                    fontSize: Math.min(13, W("3.5%")),
+                                    bottom: H("0.5%"),
+                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
+                                }}
+                                placeholder="50-200"
+                                value={companySize}
+                                onChangeText={handleCompanySizeChange}
+                            />
+                            {errors.companySize ? (
+                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
+                                    {errors.companySize}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        {/* Password */}
+                        <View style={{ marginTop: H("2%") }}>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    width: W("70%"),
+                                }}
+                            >
+                                <Icon name="lock" size={Math.min(12, W("3.5%"))} color="black" />
+                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(13, W("3.5%")) }}>Set Password</Text>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    borderBottomWidth: 1,
+                                    borderColor: errors.password ? "red" : "rgba(217, 217, 217, 1)",
+                                    width: W("70%"),
+                                    alignSelf: "center",
+                                }}
+                            >
+                                <TextInput
+                                    style={{
+                                        flex: 1,
+                                        paddingHorizontal: W("2%"),
+                                        paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
+                                        fontSize: Math.min(13, W("3.5%")),
+                                    }}
+                                    placeholder="Enter password"
+                                    secureTextEntry={!showPassword}
+                                    value={password}
+                                    onChangeText={handlePasswordChange}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                    <Icon
+                                        name={showPassword ? "eye-slash" : "eye"}
+                                        size={Math.min(13, W("3.5%"))}
+                                        color="#888"
+                                        style={{ marginRight: W("2%") }}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            {errors.password ? (
+                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
+                                    {errors.password}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        {/* Confirm Password */}
+                        <View style={{ marginTop: H("2%") }}>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    width: W("70%"),
+                                }}
+                            >
+                                <Icon name="lock" size={Math.min(12, W("3.5%"))} color="black" />
+                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(13, W("3.5%")) }}>Confirm Password</Text>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    borderBottomWidth: 1,
+                                    borderColor: errors.confirmPassword ? "red" : "rgba(217, 217, 217, 1)",
+                                    width: W("70%"),
+                                    alignSelf: "center",
+                                }}
+                            >
+                                <TextInput
+                                    style={{
+                                        flex: 1,
+                                        paddingHorizontal: W("2%"),
+                                        paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
+                                        fontSize: Math.min(13, W("3.5%")),
+                                    }}
+                                    placeholder="Confirm password"
+                                    secureTextEntry={!showConfirmPassword}
+                                    value={confirmPassword}
+                                    onChangeText={handleConfirmPasswordChange}
+                                />
+                                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                    <Icon
+                                        name={showConfirmPassword ? "eye-slash" : "eye"}
+                                        size={Math.min(13, W("3.5%"))}
+                                        color="#888"
+                                        style={{ marginRight: W("2%") }}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            {errors.confirmPassword ? (
+                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
+                                    {errors.confirmPassword}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        {/* Terms & Conditions */}
+                        <View style={{
+                            flexDirection: "row",
+                            alignSelf: "center",
+                            marginTop: H("2%"),
+                            alignItems: "center",
+                            flexWrap: "wrap",
+                        }}>
+                            <TouchableOpacity
+                                onPress={handleTermsChange}
+                                style={{
+                                    width: Math.max(15, W("4%")),
+                                    height: Math.max(15, W("4%")),
+                                    borderWidth: 1.5,
+                                    borderColor: errors.terms ? "red" : "#555",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginRight: W("1%"),
+                                    borderRadius: 4,
+                                    overflow: "hidden",
+                                }}
+                            >
+                                {isChecked && (
+                                    <Text style={{ textAlignVertical: "center", fontSize: Math.min(10, W("3%")), color: "white", backgroundColor: "rgba(143, 0, 255, 1)", width: Math.max(15, W("4%")), textAlign: "center", height: Math.max(15, W("4%")), lineHeight: Math.max(15, W("4%")) }}>✔</Text>
+                                )}
+                            </TouchableOpacity>
+                            <Text style={{ fontSize: Math.min(13, W("3.5%")) }}>Agree with </Text>
+                            <TouchableOpacity>
+                                <Text style={{ color: "blue", textDecorationLine: "underline", fontSize: Math.min(13, W("3.5%")) }}>
+                                    Terms & Conditions
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                        {errors.terms ? (
+                            <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%") }}>
+                                {errors.terms}
                             </Text>
+                        ) : null}
+
+                        {/* Sign Up Button */}
+                        <TouchableOpacity
+                            style={{
+                                alignSelf: "center",
+                                marginTop: H("2.5%"),
+                                backgroundColor: "rgba(255, 215, 0, 1)",
+                                height: Math.max(35, H("5%")),
+                                width: W("60%"),
+                                borderRadius: 10,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                opacity: isLoading ? 0.7 : 1,
+                            }}
+                            onPress={handleSignUp}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator color="#000" />
+                            ) : (
+                                <Text style={{ fontSize: Math.min(14, W("4%")), fontWeight: "bold" }}>
+                                    Sign Up
+                                </Text>
+                            )}
                         </TouchableOpacity>
+
+                        {/* Divider */}
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                alignSelf: "center",
+                                marginTop: H("2%"),
+                                width: W("60%"),
+                            }}
+                        >
+                            <View
+                                style={{
+                                    flex: 1,
+                                    height: 1,
+                                    backgroundColor: "rgba(217, 217, 217, 1)",
+                                    marginRight: W("2%"),
+                                }}
+                            />
+                            <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")), textAlign: "center" }}>
+                                or sign up with
+                            </Text>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    height: 1,
+                                    backgroundColor: "rgba(217, 217, 217, 1)",
+                                    marginLeft: W("2%"),
+                                }}
+                            />
+                        </View>
+
+                        {/* Social Icons */}
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                gap: Math.max(15, W("5%")),
+                                marginTop: H("2%"),
+                            }}
+                        >
+                            <TouchableOpacity>
+                                <Image
+                                    source={require("../../assets/icons/google.png")}
+                                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Image
+                                    source={require("../../assets/icons/facebook.png")}
+                                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Image
+                                    source={require("../../assets/icons/apple.png")}
+                                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Footer */}
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                marginTop: H("2%"),
+                                marginBottom: H("1%"),
+                                flexWrap: "wrap",
+                            }}
+                        >
+                            <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")) }}>Already have an account? </Text>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('Login1')}>
+                                <Text
+                                    style={{
+                                        color: "rgba(0, 153, 255, 1)",
+                                        fontSize: Math.min(12, W("3.5%")),
+                                        textDecorationLine: "underline",
+                                    }}
+                                >
+                                    Login
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
