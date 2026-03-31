@@ -258,7 +258,8 @@ const SignupScreen = (props) => {
         <View style={{ flex: 1 }}>
           <Image 
             source={require("../../assets/images/Splashbackground.jpg")}
-            style={{ height: 700, width: 400 }}
+            style={{ height: H("100%"), width: W("100%") }}
+            resizeMode="cover"
           />
 
           <RadialGradient
@@ -268,12 +269,12 @@ const SignupScreen = (props) => {
               "rgba(160, 80, 220, 0.2)",
               "rgba(200, 120, 255, 0.0)",
             ]}
-            stops={[0.1, 0.6, 0.9, 1]}
-            center={[200, 200]}
-            radius={200}
+            stops={[0.1, 0.5, 0.7, 0.9]}
+            center={[W("50%"), H("35%")]}
+            radius={W("80%")}
             style={{
               position: "absolute",
-              top: H("10%"),
+              top: H("15%"),
               alignSelf: "center",
               width: W("100%"),
               height: H("100%"),
@@ -281,12 +282,12 @@ const SignupScreen = (props) => {
             }}
           />
           
-          <View style={{ flexDirection: "row", position: "absolute" }}>
+          <View style={{ flexDirection: "row", position: "absolute", width: W("100%"), justifyContent: "space-between", paddingHorizontal: W("5%") }}>
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Icons name="arrow-back" size={20} color="white" style={{ top: 20, left: 20 }} />
+              <Icons name="arrow-back" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => props.navigation.navigate('Login1')}>
-              <Entypo name="cross" size={20} color="white" style={{ top: 20, left: 300 }} />
+              <Entypo name="cross" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
             </TouchableOpacity>
           </View>
 
@@ -294,9 +295,9 @@ const SignupScreen = (props) => {
             style={{
               color: "white",
               position: "absolute",
-              top: 40,
+              top: H("8%"),
               alignSelf: "center",
-              fontSize: 30,
+              fontSize: Math.min(30, W("8%")),
               fontWeight: "bold",
             }}
           >
@@ -307,11 +308,12 @@ const SignupScreen = (props) => {
             style={{
               color: "white",
               position: "absolute",
-              top: 90,
+              top: H("14%"),
               alignSelf: "center",
-              fontSize: 15,
+              fontSize: Math.min(15, W("4%")),
               fontStyle: "italic",
               textAlign: "center",
+              paddingHorizontal: W("5%"),
             }}
           >
             Fill your information below or register with{"\n"}your social account
@@ -321,22 +323,26 @@ const SignupScreen = (props) => {
           <View
             style={{
               backgroundColor: "white",
-              height: H("95%"),
+              height: H("75%"),
               width: W("100%"),
               position: "absolute",
-              top: H("22%"),
-              borderRadius: 30,
+              bottom: H("0%"),
+              borderTopEndRadius: 30,
+              borderTopStartRadius: 30,
               alignSelf: "center",
-              paddingBottom: 20,
+              paddingBottom: H("0%"),
             }}
           >
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: H("0%") }}
+            >
               <Text
                 style={{
-                  fontSize: 25,
+                  fontSize: Math.min(25, W("7%")),
                   alignSelf: "center",
                   fontWeight: "900",
-                  marginTop: 20,
+                  marginTop: H("3%"),
                 }}
               >
                 Sign Up
@@ -347,13 +353,13 @@ const SignupScreen = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 10,
+                  marginTop: H("2%"),
                   alignSelf: "center",
-                  width: 250,
+                  width: W("70%"),
                 }}
               >
-                <Icon name="user" size={14} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: 8, fontSize: 14 }}>Full Name</Text>
+                <Icon name="user" size={Math.min(14, W("4%"))} color="black" />
+                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>Full Name</Text>
               </View>
               <TextInput
                 style={{
@@ -361,8 +367,9 @@ const SignupScreen = (props) => {
                   borderBottomWidth: 1,
                   borderColor: errors.fullName && touched.fullName ? "red" : "rgba(217, 217, 217, 1)",
                   width: W("70%"),
-                  fontSize: 13,
-                  bottom: 5,
+                  fontSize: Math.min(13, W("3.5%")),
+                  bottom: H("0.5%"),
+                  paddingVertical: Platform.OS === "ios" ? H("1%") : H("0.5%"),
                 }}
                 placeholder="Daniel Park"
                 value={fullName}
@@ -370,7 +377,7 @@ const SignupScreen = (props) => {
                 onBlur={() => handleFieldBlur('fullName')}
               />
               {errors.fullName && touched.fullName && (
-                <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 5, width: W("70%") }}>
+                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
                   {errors.fullName}
                 </Text>
               )}
@@ -380,13 +387,13 @@ const SignupScreen = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 15,
+                  marginTop: H("2%"),
                   alignSelf: "center",
-                  width: 250,
+                  width: W("70%"),
                 }}
               >
-                <Icon name="envelope" size={14} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: 8 }}>Email</Text>
+                <Icon name="envelope" size={Math.min(14, W("4%"))} color="black" />
+                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>Email</Text>
               </View>
               <TextInput
                 style={{
@@ -394,8 +401,9 @@ const SignupScreen = (props) => {
                   borderBottomWidth: 1,
                   borderColor: errors.email && touched.email ? "red" : "rgba(217, 217, 217, 1)",
                   width: W("70%"),
-                  fontSize: 13,
-                  bottom: 5,
+                  fontSize: Math.min(13, W("3.5%")),
+                  bottom: H("0.5%"),
+                  paddingVertical: Platform.OS === "ios" ? H("1%") : H("0.5%"),
                 }}
                 placeholder="example@gmail.com"
                 value={email}
@@ -405,7 +413,7 @@ const SignupScreen = (props) => {
                 autoCapitalize="none"
               />
               {errors.email && touched.email && (
-                <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 5, width: W("70%") }}>
+                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
                   {errors.email}
                 </Text>
               )}
@@ -415,13 +423,13 @@ const SignupScreen = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 15,
+                  marginTop: H("2%"),
                   alignSelf: "center",
-                  width: 250,
+                  width: W("70%"),
                 }}
               >
-                <Icon name="lock" size={14} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: 8 }}>Password</Text>
+                <Icon name="lock" size={Math.min(14, W("4%"))} color="black" />
+                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>Password</Text>
               </View>
               <View
                 style={{
@@ -436,9 +444,9 @@ const SignupScreen = (props) => {
                 <TextInput
                   style={{
                     flex: 1,
-                    paddingHorizontal: 5,
-                    paddingVertical: 15,
-                    fontSize: 13,
+                    paddingHorizontal: W("2%"),
+                    paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
+                    fontSize: Math.min(13, W("3.5%")),
                   }}
                   placeholder="Enter password"
                   secureTextEntry={!showPassword}
@@ -449,14 +457,14 @@ const SignupScreen = (props) => {
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   <Icon
                     name={showPassword ? "eye-slash" : "eye"}
-                    size={13}
+                    size={Math.min(13, W("3.5%"))}
                     color="#888"
-                    style={{ marginRight: 8 }}
+                    style={{ marginRight: W("2%") }}
                   />
                 </TouchableOpacity>
               </View>
               {errors.password && touched.password && (
-                <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 5, width: W("70%") }}>
+                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
                   {errors.password}
                 </Text>
               )}
@@ -466,13 +474,13 @@ const SignupScreen = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 15,
+                  marginTop: H("2%"),
                   alignSelf: "center",
                   width: W("70%"),
                 }}
               >
-                <Icon name="lock" size={14} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: 8 }}>
+                <Icon name="lock" size={Math.min(14, W("4%"))} color="black" />
+                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>
                   Confirm Password
                 </Text>
               </View>
@@ -489,9 +497,9 @@ const SignupScreen = (props) => {
                 <TextInput
                   style={{
                     flex: 1,
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    fontSize: 13,
+                    paddingHorizontal: W("3%"),
+                    paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
+                    fontSize: Math.min(13, W("3.5%")),
                   }}
                   placeholder="Confirm password"
                   secureTextEntry={!showConfirmPassword}
@@ -502,14 +510,14 @@ const SignupScreen = (props) => {
                 <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                   <Icon
                     name={showConfirmPassword ? "eye-slash" : "eye"}
-                    size={13}
+                    size={Math.min(13, W("3.5%"))}
                     color="#888"
-                    style={{ marginRight: 8 }}
+                    style={{ marginRight: W("2%") }}
                   />
                 </TouchableOpacity>
               </View>
               {errors.confirmPassword && touched.confirmPassword && (
-                <Text style={{ color: "red", fontSize: 11, alignSelf: "center", marginTop: 5, width: W("70%") }}>
+                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
                   {errors.confirmPassword}
                 </Text>
               )}
@@ -517,41 +525,44 @@ const SignupScreen = (props) => {
               {/* Terms and Conditions */}
               <View style={{
                 flexDirection: "row",
-                left: 40,
-                top: 10,
+                left: W("10%"),
+                top: H("1%"),
                 alignItems: "center",
                 flexWrap: "wrap",
+                width: W("80%"),
               }}>
                 <TouchableOpacity
                   onPress={handleTermsChange}
                   style={{
-                    width: 18,
-                    height: 18,
+                    width: W("5%"),
+                    height: W("5%"),
+                    minWidth: 18,
+                    minHeight: 18,
                     borderWidth: 1.5,
                     borderColor: errors.terms ? "red" : "#555",
                     justifyContent: "center",
                     alignItems: "center",
-                    marginRight: 8,
+                    marginRight: W("2%"),
                     borderRadius: 4,
                     backgroundColor: isChecked ? "rgba(143, 0, 255, 1)" : "transparent",
                   }}
                 >
                   {isChecked && (
-                    <Text style={{ fontSize: 12, color: "white" }}>✓</Text>
+                    <Text style={{ fontSize: Math.min(12, W("3.5%")), color: "white" }}>✓</Text>
                   )}
                 </TouchableOpacity>
-                <Text style={{ fontSize: 13 }}>Agree with </Text>
+                <Text style={{ fontSize: Math.min(13, W("3.5%")) }}>Agree with </Text>
                 <TouchableOpacity onPress={() => {
                   // Navigate to Terms & Conditions screen
                   props.navigation.navigate('TermsConditions');
                 }}>
-                  <Text style={{ color: "blue", textDecorationLine: "underline", fontSize: 13 }}>
+                  <Text style={{ color: "blue", textDecorationLine: "underline", fontSize: Math.min(13, W("3.5%")) }}>
                     Terms & Conditions
                   </Text>
                 </TouchableOpacity>
               </View>
               {errors.terms && (
-                <Text style={{ color: "red", fontSize: 11, left: 40, marginTop: 5 }}>
+                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), left: W("10%"), marginTop: H("0.5%") }}>
                   {errors.terms}
                 </Text>
               )}
@@ -560,10 +571,10 @@ const SignupScreen = (props) => {
               <TouchableOpacity
                 style={{
                   alignSelf: "center",
-                  marginTop: 30,
+                  marginTop: H("3%"),
                   backgroundColor: "rgba(255, 215, 0, 1)",
-                  height: 45,
-                  width: 250,
+                  height: Math.max(40, H("6%")),
+                  width: W("60%"),
                   borderRadius: 10,
                   justifyContent: "center",
                   alignItems: "center",
@@ -575,7 +586,7 @@ const SignupScreen = (props) => {
                 {isLoading ? (
                   <ActivityIndicator color="#000" />
                 ) : (
-                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>Sign Up</Text>
+                  <Text style={{ fontSize: Math.min(14, W("4%")), fontWeight: "bold" }}>Sign Up</Text>
                 )}
               </TouchableOpacity>
 
@@ -585,8 +596,8 @@ const SignupScreen = (props) => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: 20,
-                  width: 200,
+                  marginTop: H("2%"),
+                  width: W("60%"),
                   alignSelf: "center",
                 }}
               >
@@ -595,16 +606,16 @@ const SignupScreen = (props) => {
                     flex: 1,
                     height: 1,
                     backgroundColor: "rgba(217, 217, 217, 1)",
-                    marginHorizontal: 10,
+                    marginHorizontal: W("2%"),
                   }}
                 />
-                <Text style={{ color: "gray", fontSize: 12 }}>or sign up with</Text>
+                <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")) }}>or sign up with</Text>
                 <View
                   style={{
                     flex: 1,
                     height: 1,
                     backgroundColor: "rgba(217, 217, 217, 1)",
-                    marginHorizontal: 10,
+                    marginHorizontal: W("2%"),
                   }}
                 />
               </View>
@@ -614,8 +625,8 @@ const SignupScreen = (props) => {
                 style={{
                   flexDirection: "row",
                   justifyContent: "center",
-                  gap: 15,
-                  marginTop: 15,
+                  gap: Math.max(10, W("5%")),
+                  marginTop: H("2%"),
                 }}
               >
                 <TouchableOpacity onPress={() => {
@@ -624,7 +635,7 @@ const SignupScreen = (props) => {
                 }}>
                   <Image
                     source={require("../../assets/icons/google.png")}
-                    style={{ height: 20, width: 20 }}
+                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
@@ -633,7 +644,7 @@ const SignupScreen = (props) => {
                 }}>
                   <Image
                     source={require("../../assets/icons/facebook.png")}
-                    style={{ height: 20, width: 20 }}
+                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
@@ -642,7 +653,7 @@ const SignupScreen = (props) => {
                 }}>
                   <Image
                     source={require("../../assets/icons/apple.png")}
-                    style={{ height: 20, width: 20 }}
+                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
                   />
                 </TouchableOpacity>
               </View>
@@ -652,16 +663,16 @@ const SignupScreen = (props) => {
                 style={{
                   flexDirection: "row",
                   justifyContent: "center",
-                  marginTop: 20,
-                  marginBottom: 20,
+                  marginTop: H("2%"),
+                  marginBottom: H("2%"),
                 }}
               >
-                <Text style={{ color: "gray" }}>Already have an account? </Text>
+                <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")) }}>Already have an account? </Text>
                 <TouchableOpacity onPress={() => props.navigation.navigate('Login')}>
                   <Text
                     style={{
                       color: "rgba(0, 153, 255, 1)",
-                      fontSize: 11,
+                      fontSize: Math.min(12, W("3.5%")),
                       textDecorationLine: "underline",
                     }}
                   >
