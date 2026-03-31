@@ -192,35 +192,37 @@ const CompanyAdmin = (props) => {
                 contentContainerStyle={{ flexGrow: 1 }}
                 style={{ flex: 1, backgroundColor: '#fff' }}
             >
-                <View style={{ flex: 1 }}>
+                <View style={{ position: "relative" }}>
+                    {/* Background Image */}
                     <Image 
                         source={require("../../assets/images/Splashbackground.jpg")}
-                        style={{ height: H("100%"), width: W("100%") }}
+                        style={{ height: H("100%"), width: W("100%"), position: "absolute" }}
                         resizeMode="cover"
                     />
 
                     {/* Purple Glow */}
                     <RadialGradient
-                              colors={[
-                                "rgba(143, 0, 255, 1)",
-                                "rgba(143, 0, 250, 0.6)",
-                                "rgba(160, 80, 220, 0.2)",
-                                "rgba(200, 120, 255, 0.0)",
-                              ]}
-                              stops={[0.1, 0.5, 0.7, 0.9]}
-                              center={[W("50%"), H("35%")]}
-                              radius={W("80%")}
-                              style={{
-                                position: "absolute",
-                                top: H("10%"),
-                                alignSelf: "center",
-                                width: W("100%"),
-                                height: H("100%"),
-                                borderRadius: H("20%"),
-                              }}
-                            />
+                        colors={[
+                            "rgba(143, 0, 255, 1)",
+                            "rgba(143, 0, 250, 0.6)",
+                            "rgba(160, 80, 220, 0.2)",
+                            "rgba(200, 120, 255, 0.0)",
+                        ]}
+                        stops={[0.1, 0.5, 0.7, 0.9]}
+                        center={[W("50%"), H("35%")]}
+                        radius={W("80%")}
+                        style={{
+                            position: "absolute",
+                            top: H("0%"),
+                            alignSelf: "center",
+                            width: W("100%"),
+                            height: H("60%"),
+                            borderRadius: H("0%"),
+                        }}
+                    />
                     
-                    <View style={{ flexDirection: "row", position: "absolute", width: W("100%"), justifyContent: "space-between", paddingHorizontal: W("5%") }}>
+                    {/* Navigation Buttons */}
+                    <View style={{ flexDirection: "row", position: "absolute", width: W("100%"), justifyContent: "space-between", paddingHorizontal: W("5%"), zIndex: 10 }}>
                         <TouchableOpacity onPress={() => props.navigation.goBack()}>
                             <Ionicons name="arrow-back" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
                         </TouchableOpacity>
@@ -238,6 +240,7 @@ const CompanyAdmin = (props) => {
                             alignSelf: "center",
                             fontSize: Math.min(30, W("8%")),
                             fontWeight: "bold",
+                            zIndex: 10,
                         }}
                     >
                         Create Account
@@ -253,22 +256,22 @@ const CompanyAdmin = (props) => {
                             fontStyle: "italic",
                             textAlign: "center",
                             paddingHorizontal: W("5%"),
+                            zIndex: 10,
                         }}
                     >
                         Set up your Company on {"\n"}Planet Care
                     </Text>
 
-                    {/* White Form Card */}
+                    {/* White Form Card - Removed fixed height and adjusted width */}
                     <View
                         style={{
                             backgroundColor: "white",
-                            height: H("95%"),
                             width: W("100%"),
-                            position: "absolute",
-                            borderRadius: 30,
+                            borderTopLeftRadius: 30,
+                            borderTopRightRadius: 30,
                             alignSelf: "center",
-                            paddingBottom: H("0%"),
-                            top: H("20%"),
+                            marginTop: H("22%"),
+                            paddingBottom: H("5%"),
                         }}
                     >
                         <Text
@@ -302,7 +305,6 @@ const CompanyAdmin = (props) => {
                                     borderColor: errors.fullName ? "red" : "rgba(217, 217, 217, 1)",
                                     width: W("70%"),
                                     fontSize: Math.min(13, W("3.5%")),
-                                    bottom: H("0.5%"),
                                     paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
                                 }}
                                 placeholder="Daniel Park"
@@ -336,7 +338,6 @@ const CompanyAdmin = (props) => {
                                     borderColor: errors.companyName ? "red" : "rgba(217, 217, 217, 1)",
                                     width: W("70%"),
                                     fontSize: Math.min(13, W("3.5%")),
-                                    bottom: H("0.5%"),
                                     paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
                                 }}
                                 placeholder="Planet Care Inc."
@@ -370,7 +371,6 @@ const CompanyAdmin = (props) => {
                                     borderColor: errors.companyEmail ? "red" : "rgba(217, 217, 217, 1)",
                                     width: W("70%"),
                                     fontSize: Math.min(13, W("3.5%")),
-                                    bottom: H("0.5%"),
                                     paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
                                 }}
                                 placeholder="example@gmail.com"
@@ -406,7 +406,6 @@ const CompanyAdmin = (props) => {
                                     borderColor: errors.companySize ? "red" : "rgba(217, 217, 217, 1)",
                                     width: W("70%"),
                                     fontSize: Math.min(13, W("3.5%")),
-                                    bottom: H("0.5%"),
                                     paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
                                 }}
                                 placeholder="50-200"
@@ -545,7 +544,7 @@ const CompanyAdmin = (props) => {
                                 }}
                             >
                                 {isChecked && (
-                                    <Text style={{ textAlignVertical: "center", fontSize: Math.min(10, W("3%")), color: "white", backgroundColor: "rgba(143, 0, 255, 1)", width: Math.max(15, W("4%")), textAlign: "center", height: Math.max(15, W("4%")), lineHeight: Math.max(15, W("4%")) }}>✔</Text>
+                                    <Text style={{ fontSize: Math.min(10, W("3%")), color: "white", backgroundColor: "rgba(143, 0, 255, 1)", textAlign: "center", lineHeight: Math.max(15, W("4%")) }}>✔</Text>
                                 )}
                             </TouchableOpacity>
                             <Text style={{ fontSize: Math.min(13, W("3.5%")) }}>Agree with </Text>
@@ -653,7 +652,6 @@ const CompanyAdmin = (props) => {
                                 flexDirection: "row",
                                 justifyContent: "center",
                                 marginTop: H("2%"),
-                                marginBottom: H("1%"),
                                 flexWrap: "wrap",
                             }}
                         >
