@@ -7,13 +7,10 @@ import { useNavigation } from "@react-navigation/native";
 
 const Header = () => {
 
-  // ✅ Get current hour
   const currentHour = new Date().getHours();
 
-  // ✅ Morning or Evening
   const isMorning = currentHour < 12;
 
-  // ✅ Dynamic values
   const greetingText = isMorning ? "Good Morning" : "Good Evening";
 
   const backgroundImage = isMorning

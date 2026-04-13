@@ -8,7 +8,10 @@ import {
   Dimensions,
 } from "react-native";
 import Icons from "react-native-vector-icons/Ionicons";
-
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 const { width } = Dimensions.get("window");
 
 const Profilesetup2 = (props) => {
