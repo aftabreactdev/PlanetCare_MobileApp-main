@@ -1,5 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Dimensions, Platform } from "react-native";
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const data = {
   labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -7,31 +9,85 @@ const data = {
 };
 
 const MoodChart = () => {
+  // Responsive sizing
+  const marginHorizontal = screenWidth * 0.05;
+  const marginTop = screenHeight * 0.012;
+  const titleFontSize = screenWidth * 0.05;
+  const titleMarginBottom = screenHeight * 0.012;
+  const chartHeight = screenHeight * 0.26;
+  const chartPadding = screenWidth * 0.04;
+  const chartBorderRadius = screenWidth * 0.04;
+  const yAxisMarginRight = screenWidth * 0.025;
+  const yAxisFontSize = screenWidth * 0.03;
+  const barWidth = screenWidth * 0.018;
+  const barBorderRadius = barWidth / 2;
+  const xAxisMarginTop = screenHeight * 0.008;
+  const xAxisPaddingLeft = screenWidth * 0.1;
+  const xAxisFontSize = screenWidth * 0.03;
+  const maxBarHeight = chartHeight - chartPadding * 2;
+  const maxValue = Math.max(...data.values);
+  const barHeightMultiplier = maxBarHeight / maxValue;
+
   return (
-    <View style={{ marginHorizontal: 20, marginTop: 10 }}>
-      
+    <View style={{ 
+      marginHorizontal: marginHorizontal, 
+      marginTop: marginTop 
+    }}>
       {/* Title */}
-      <Text style={{ color: "#fff", fontSize: 20, marginBottom: 10, fontWeight: "600" }}>
+      <Text 
+        style={{ 
+          color: "#fff", 
+          fontSize: titleFontSize, 
+          marginBottom: titleMarginBottom, 
+          fontWeight: "600",
+          includeFontPadding: false,
+          ...Platform.select({
+            android: {
+              textAlignVertical: "center",
+            },
+          }),
+        }}
+      >
         Mood Summary
       </Text>
 
       {/* Chart Box */}
       <View
         style={{
-          height: 220,
+          height: chartHeight,
           backgroundColor: "rgba(27, 44, 87, 0.6)",
-          borderRadius: 16,
-          padding: 15,
+          borderRadius: chartBorderRadius,
+          padding: chartPadding,
           flexDirection: "row",
           overflow: "hidden",
-        borderWidth:1,
-        borderColor:"white",
+          borderWidth: 1,
+          borderColor: "white",
+          // Pixel perfect: prevent any internal spacing issues
         }}
       >
         {/* Y Axis */}
-        <View style={{ justifyContent: "space-between", marginRight: 10 }}>
+        <View style={{ 
+          justifyContent: "space-between", 
+          marginRight: yAxisMarginRight,
+          height: "100%",
+        }}>
           {["Happy", "Alright", "Meh", "Sad", "Unhappy"].map((l, i) => (
-            <Text key={i} style={{ color: "#fff", fontSize: 12 }}>
+            <Text 
+              key={i} 
+              style={{ 
+                color: "#fff", 
+                fontSize: yAxisFontSize,
+                includeFontPadding: false,
+                ...Platform.select({
+                  android: {
+                    textAlignVertical: "center",
+                  },
+                }),
+              }}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
               {l}
             </Text>
           ))}
@@ -40,7 +96,7 @@ const MoodChart = () => {
         {/* Chart Area */}
         <View style={{ flex: 1 }}>
 
-          {/* ✅ GRID LINES */}
+          {/* GRID LINES */}
           <View
             style={{
               position: "absolute",
@@ -56,14 +112,13 @@ const MoodChart = () => {
                 key={i}
                 style={{
                   height: 1,
-                  backgroundColor:
-                    i === 4 ? "#fff" : "rgba(255,255,255,0.2)",
+                  backgroundColor: i === 4 ? "#fff" : "rgba(255,255,255,0.2)",
                 }}
               />
             ))}
           </View>
 
-          {/* ✅ BARS */}
+          {/* BARS */}
           <View
             style={{
               flex: 1,
@@ -76,10 +131,12 @@ const MoodChart = () => {
               <View
                 key={i}
                 style={{
-                  width: 6,
-                  height: v * 30,
+                  width: barWidth,
+                  height: v * barHeightMultiplier,
                   backgroundColor: "#E0E0E0",
-                  borderRadius: 3,
+                  borderRadius: barBorderRadius,
+                  // Pixel perfect: ensure bars align properly
+                  minHeight: 1,
                 }}
               />
             ))}
@@ -92,12 +149,28 @@ const MoodChart = () => {
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          marginTop: 6,
-          paddingLeft: 40,
+          marginTop: xAxisMarginTop,
+          paddingLeft: xAxisPaddingLeft,
         }}
       >
         {data.labels.map((l, i) => (
-          <Text key={i} style={{ color: "#fff", fontSize: 12 }}>
+          <Text 
+            key={i} 
+            style={{ 
+              color: "#fff", 
+              fontSize: xAxisFontSize,
+              includeFontPadding: false,
+              textAlign: "center",
+              ...Platform.select({
+                android: {
+                  textAlignVertical: "center",
+                },
+              }),
+            }}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
             {l}
           </Text>
         ))}
