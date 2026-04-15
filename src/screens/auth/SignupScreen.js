@@ -1,683 +1,386 @@
 import React, { useState } from "react";
-import { Text, View, Image, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
-import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 import RadialGradient from "react-native-radial-gradient";
-import Icon from "react-native-vector-icons/FontAwesome";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
-import Icons from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const SignupScreen = (props) => {
-  // State for form fields
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  
-  // State for UI
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // State for errors
-  const [errors, setErrors] = useState({
+const SignupScreen = ({ navigation }) => {
+  const [form, setForm] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
-    terms: "",
-  });
-  
-  // State for touched fields (to show errors only after user interaction)
-  const [touched, setTouched] = useState({
-    fullName: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
   });
 
-  // Validation functions
-  const validateFullName = (name) => {
-    if (!name.trim()) {
-      return "Full name is required";
-    }
-    if (name.trim().length < 3) {
-      return "Full name must be at least 3 characters";
-    }
-    if (name.trim().length > 50) {
-      return "Full name must be less than 50 characters";
-    }
-    if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-      return "Full name can only contain letters and spaces";
-    }
-    return "";
+  const [ui, setUi] = useState({
+    showPassword: false,
+    showConfirmPassword: false,
+    isChecked: false,
+    isLoading: false,
+  });
+
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  // Reusable validation rules
+  const validators = {
+    fullName: (name) =>
+      !name.trim()
+        ? "Full name is required"
+        : name.trim().length < 3
+        ? "Minimum 3 characters"
+        : name.trim().length > 50
+        ? "Maximum 50 characters"
+        : !/^[a-zA-Z\s]+$/.test(name.trim())
+        ? "Only letters allowed"
+        : "",
+
+    email: (email) =>
+      !email.trim()
+        ? "Email is required"
+        : !/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim())
+        ? "Invalid email"
+        : "",
+
+    password: (pass) =>
+      !pass
+        ? "Password required"
+        : pass.length < 6
+        ? "Minimum 6 characters"
+        : pass.length > 50
+        ? "Maximum 50 characters"
+        : "",
+
+    confirmPassword: (val, original) =>
+      !val
+        ? "Please confirm password"
+        : val !== original
+        ? "Passwords do not match"
+        : "",
+
+    terms: (checked) => (!checked ? "You must accept Terms & Conditions" : ""),
   };
 
-  const validateEmail = (email) => {
-    if (!email.trim()) {
-      return "Email is required";
-    }
-    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      return "Please enter a valid email address";
-    }
-    if (email.trim().length > 100) {
-      return "Email must be less than 100 characters";
-    }
-    return "";
-  };
+  // Reusable input component
+  const InputField = ({
+    label,
+    icon,
+    secure,
+    toggleSecure,
+    value,
+    onChange,
+    onBlur,
+    error,
+  }) => (
+    <>
+      <View style={styles.labelRow}>
+        <FontAwesome name={icon} size={14} color="black" />
+        <Text style={styles.label}>{label}</Text>
+      </View>
 
-  const validatePassword = (password) => {
-    if (!password) {
-      return "Password is required";
-    }
-    if (password.length < 6) {
-      return "Password must be at least 6 characters";
-    }
-    if (password.length > 50) {
-      return "Password must be less than 50 characters";
-    }
-    
-    // Optional: Strong password validation
-    // const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    // if (!strongPasswordRegex.test(password)) {
-    //   return "Password must contain at least one uppercase, one lowercase, one number and one special character";
-    // }
-    
-    return "";
-  };
+      <View
+        style={[
+          styles.inputContainer,
+          { borderColor: error ? "red" : "#D9D9D9" },
+        ]}
+      >
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#989898"
+          secureTextEntry={secure}
+          value={value}
+          onChangeText={onChange}
+          onBlur={onBlur}
+          autoCapitalize="none"
+        />
 
-  const validateConfirmPassword = (confirmPwd, originalPwd) => {
-    if (!confirmPwd) {
-      return "Please confirm your password";
-    }
-    if (confirmPwd !== originalPwd) {
-      return "Passwords do not match";
-    }
-    return "";
-  };
+        {toggleSecure && (
+          <TouchableOpacity onPress={toggleSecure}>
+            <FontAwesome
+              name={secure ? "eye" : "eye-slash"}
+              size={14}
+              color="#666"
+              style={{ marginRight: W("2%") }}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
 
-  const validateTerms = (checked) => {
-    if (!checked) {
-      return "You must agree to the Terms & Conditions";
-    }
-    return "";
-  };
+      {error && <Text style={styles.error}>{error}</Text>}
+    </>
+  );
 
-  // Handle field changes with validation
-  const handleFullNameChange = (text) => {
-    setFullName(text);
-    if (touched.fullName) {
-      setErrors({ ...errors, fullName: validateFullName(text) });
-    }
-  };
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    let err = "";
 
-  const handleEmailChange = (text) => {
-    setEmail(text);
-    if (touched.email) {
-      setErrors({ ...errors, email: validateEmail(text) });
-    }
-  };
-
-  const handlePasswordChange = (text) => {
-    setPassword(text);
-    if (touched.password) {
-      setErrors({ ...errors, password: validatePassword(text) });
-    }
-    // Also re-validate confirm password if it has been touched
-    if (touched.confirmPassword && confirmPassword) {
-      setErrors({ 
-        ...errors, 
-        confirmPassword: validateConfirmPassword(confirmPassword, text),
-        password: validatePassword(text)
-      });
+    if (field === "confirmPassword") {
+      err = validators.confirmPassword(form.confirmPassword, form.password);
     } else {
-      setErrors({ ...errors, password: validatePassword(text) });
+      err = validators[field](form[field]);
     }
+
+    setErrors((prev) => ({ ...prev, [field]: err }));
   };
 
-  const handleConfirmPasswordChange = (text) => {
-    setConfirmPassword(text);
-    if (touched.confirmPassword) {
-      setErrors({ 
-        ...errors, 
-        confirmPassword: validateConfirmPassword(text, password) 
-      });
-    }
-  };
-
-  const handleTermsChange = () => {
-    const newChecked = !isChecked;
-    setIsChecked(newChecked);
-    if (errors.terms) {
-      setErrors({ ...errors, terms: validateTerms(newChecked) });
-    }
-  };
-
-  const handleFieldBlur = (field) => {
-    setTouched({ ...touched, [field]: true });
-    
-    // Validate field on blur
-    switch(field) {
-      case 'fullName':
-        setErrors({ ...errors, fullName: validateFullName(fullName) });
-        break;
-      case 'email':
-        setErrors({ ...errors, email: validateEmail(email) });
-        break;
-      case 'password':
-        setErrors({ ...errors, password: validatePassword(password) });
-        break;
-      case 'confirmPassword':
-        setErrors({ ...errors, confirmPassword: validateConfirmPassword(confirmPassword, password) });
-        break;
-    }
-  };
-
-  // Validate all fields before submission
   const validateForm = () => {
-    const fullNameError = validateFullName(fullName);
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
-    const confirmPasswordError = validateConfirmPassword(confirmPassword, password);
-    const termsError = validateTerms(isChecked);
-    
-    setErrors({
-      fullName: fullNameError,
-      email: emailError,
-      password: passwordError,
-      confirmPassword: confirmPasswordError,
-      terms: termsError,
-    });
-    
+    const newErrors = {
+      fullName: validators.fullName(form.fullName),
+      email: validators.email(form.email),
+      password: validators.password(form.password),
+      confirmPassword: validators.confirmPassword(
+        form.confirmPassword,
+        form.password
+      ),
+      terms: validators.terms(ui.isChecked),
+    };
+
+    setErrors(newErrors);
     setTouched({
       fullName: true,
       email: true,
       password: true,
       confirmPassword: true,
     });
-    
-    return !fullNameError && !emailError && !passwordError && !confirmPasswordError && !termsError;
+
+    return Object.values(newErrors).every((e) => e === "");
   };
 
-  // Handle sign up
   const handleSignUp = async () => {
-    if (validateForm()) {
-      setIsLoading(true);
-      
-      try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Here you would make your actual API call
-        // const response = await api.signup({ fullName, email, password });
-        
-        console.log("Sign up successful", { fullName, email });
-        
-        // Show success message
-        Alert.alert(
-          "Success",
-          "Account created successfully!",
-          [
-            {
-              text: "OK",
-              onPress: () => props.navigation.navigate('MoodSelection')
-            }
-          ]
-        );
-      } catch (error) {
-        // Handle API errors
-        Alert.alert(
-          "Sign Up Failed",
-          error.message || "An error occurred during sign up. Please try again."
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      // Show validation error summary
-      const errorMessages = Object.values(errors).filter(error => error !== "");
-      if (errorMessages.length > 0) {
-        Alert.alert(
-          "Validation Error",
-          errorMessages.join("\n")
-        );
-      }
+    if (!validateForm()) {
+      Alert.alert("Validation Error", "Please fix the highlighted fields.");
+      return;
     }
+
+    setUi((prev) => ({ ...prev, isLoading: true }));
+
+    setTimeout(() => {
+      Alert.alert("Success", "Account created successfully!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("MoodSelection"),
+        },
+      ]);
+
+      setUi((prev) => ({ ...prev, isLoading: false }));
+    }, 1200);
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
-      <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flex: 1 }}>
-          <Image 
+          <Image
             source={require("../../assets/images/Splashbackground.jpg")}
-            style={{ height: H("100%"), width: W("100%") }}
-            resizeMode="cover"
+            style={styles.bgImage}
           />
 
           <RadialGradient
             colors={[
-              "rgba(143, 0, 255, 1)",
-              "rgba(143, 0, 250, 0.6)",
-              "rgba(160, 80, 220, 0.2)",
-              "rgba(200, 120, 255, 0.0)",
+              "rgba(143,0,255,1)",
+              "rgba(143,0,250,0.6)",
+              "rgba(160,80,220,0.2)",
+              "rgba(200,120,255,0)",
             ]}
             stops={[0.1, 0.5, 0.7, 0.9]}
             center={[W("50%"), H("35%")]}
             radius={W("80%")}
-            style={{
-              position: "absolute",
-              top: H("15%"),
-              alignSelf: "center",
-              width: W("100%"),
-              height: H("100%"),
-              borderRadius: H("20%"),
-            }}
+            style={styles.gradient}
           />
-          
-          <View style={{ flexDirection: "row", position: "absolute", width: W("100%"), justifyContent: "space-between", paddingHorizontal: W("5%") }}>
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Icons name="arrow-back" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
+
+          {/* Header buttons */}
+          <View style={styles.topBar}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => props.navigation.navigate('Login1')}>
-              <Entypo name="cross" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
+            <TouchableOpacity onPress={() => navigation.navigate("Login1")}>
+              <Entypo name="cross" size={24} color="white" />
             </TouchableOpacity>
           </View>
 
-          <Text
-            style={{
-              color: "white",
-              position: "absolute",
-              top: H("8%"),
-              alignSelf: "center",
-              fontSize: Math.min(30, W("8%")),
-              fontWeight: "bold",
-            }}
-          >
-            Create Account
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>
+            Fill your information below or register with{"\n"}your social
+            account
           </Text>
 
-          <Text
-            style={{
-              color: "white",
-              position: "absolute",
-              top: H("14%"),
-              alignSelf: "center",
-              fontSize: Math.min(15, W("4%")),
-              fontStyle: "italic",
-              textAlign: "center",
-              paddingHorizontal: W("5%"),
-            }}
-          >
-            Fill your information below or register with{"\n"}your social account
-          </Text>
+          {/* Card */}
+          <View style={styles.card}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.cardTitle}>Sign Up</Text>
 
-          {/* White Form Card */}
-          <View
-            style={{
-              backgroundColor: "white",
-              height: H("75%"),
-              width: W("100%"),
-              position: "absolute",
-              bottom: H("0%"),
-              borderTopEndRadius: 30,
-              borderTopStartRadius: 30,
-              alignSelf: "center",
-              paddingBottom: H("0%"),
-            }}
-          >
-            <ScrollView 
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: H("0%") }}
-            >
-              <Text
-                style={{
-                  fontSize: Math.min(25, W("7%")),
-                  alignSelf: "center",
-                  fontWeight: "900",
-                  marginTop: H("3%"),
-                }}
-              >
-                Sign Up
-              </Text>
-
-              {/* Full Name Input */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: H("2%"),
-                  alignSelf: "center",
-                  width: W("70%"),
-                }}
-              >
-                <Icon name="user" size={Math.min(14, W("4%"))} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>Full Name</Text>
-              </View>
-              <TextInput
-                style={{
-                  alignSelf: "center",
-                  borderBottomWidth: 1,
-                  borderColor: errors.fullName && touched.fullName ? "red" : "rgba(217, 217, 217, 1)",
-                  width: W("70%"),
-                  fontSize: Math.min(13, W("3.5%")),
-                  bottom: H("0.5%"),
-                  paddingVertical: Platform.OS === "ios" ? H("1%") : H("0.5%"),
-                }}
-                placeholder="Daniel Park"
-                value={fullName}
-                onChangeText={handleFullNameChange}
-                onBlur={() => handleFieldBlur('fullName')}
+              {/* Full Name */}
+              <InputField
+                label="Full Name"
+                icon="user"
+                value={form.fullName}
+                onChange={(text) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    fullName: text,
+                  }))
+                }
+                onBlur={() => handleBlur("fullName")}
+                error={touched.fullName && errors.fullName}
               />
-              {errors.fullName && touched.fullName && (
-                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
-                  {errors.fullName}
-                </Text>
-              )}
 
-              {/* Email Input */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: H("2%"),
-                  alignSelf: "center",
-                  width: W("70%"),
-                }}
-              >
-                <Icon name="envelope" size={Math.min(14, W("4%"))} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>Email</Text>
-              </View>
-              <TextInput
-                style={{
-                  alignSelf: "center",
-                  borderBottomWidth: 1,
-                  borderColor: errors.email && touched.email ? "red" : "rgba(217, 217, 217, 1)",
-                  width: W("70%"),
-                  fontSize: Math.min(13, W("3.5%")),
-                  bottom: H("0.5%"),
-                  paddingVertical: Platform.OS === "ios" ? H("1%") : H("0.5%"),
-                }}
-                placeholder="example@gmail.com"
-                value={email}
-                onChangeText={handleEmailChange}
-                onBlur={() => handleFieldBlur('email')}
-                keyboardType="email-address"
-                autoCapitalize="none"
+              {/* Email */}
+              <InputField
+                label="Email"
+                icon="envelope"
+                value={form.email}
+                onChange={(text) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    email: text,
+                  }))
+                }
+                onBlur={() => handleBlur("email")}
+                error={touched.email && errors.email}
               />
-              {errors.email && touched.email && (
-                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
-                  {errors.email}
-                </Text>
-              )}
 
-              {/* Password Input */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: H("2%"),
-                  alignSelf: "center",
-                  width: W("70%"),
-                }}
-              >
-                <Icon name="lock" size={Math.min(14, W("4%"))} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>Password</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  borderBottomWidth: 1,
-                  borderColor: errors.password && touched.password ? "red" : "rgba(217, 217, 217, 1)",
-                  width: W("70%"),
-                  alignSelf: "center",
-                }}
-              >
-                <TextInput
-                  style={{
-                    flex: 1,
-                    paddingHorizontal: W("2%"),
-                    paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
-                    fontSize: Math.min(13, W("3.5%")),
-                  }}
-                  placeholder="Enter password"
-                  secureTextEntry={!showPassword}
-                  value={password}
-                  onChangeText={handlePasswordChange}
-                  onBlur={() => handleFieldBlur('password')}
-                />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                  <Icon
-                    name={showPassword ? "eye-slash" : "eye"}
-                    size={Math.min(13, W("3.5%"))}
-                    color="#888"
-                    style={{ marginRight: W("2%") }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {errors.password && touched.password && (
-                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
-                  {errors.password}
-                </Text>
-              )}
+              {/* Password */}
+              <InputField
+                label="Password"
+                icon="lock"
+                secure={!ui.showPassword}
+                toggleSecure={() =>
+                  setUi((prev) => ({
+                    ...prev,
+                    showPassword: !prev.showPassword,
+                  }))
+                }
+                value={form.password}
+                onChange={(text) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    password: text,
+                  }))
+                }
+                onBlur={() => handleBlur("password")}
+                error={touched.password && errors.password}
+              />
 
-              {/* Confirm Password Input */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: H("2%"),
-                  alignSelf: "center",
-                  width: W("70%"),
-                }}
-              >
-                <Icon name="lock" size={Math.min(14, W("4%"))} color="black" />
-                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(14, W("4%")) }}>
-                  Confirm Password
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  borderBottomWidth: 1,
-                  borderColor: errors.confirmPassword && touched.confirmPassword ? "red" : "rgba(217, 217, 217, 1)",
-                  width: W("70%"),
-                  alignSelf: "center",
-                }}
-              >
-                <TextInput
-                  style={{
-                    flex: 1,
-                    paddingHorizontal: W("3%"),
-                    paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
-                    fontSize: Math.min(13, W("3.5%")),
-                  }}
-                  placeholder="Confirm password"
-                  secureTextEntry={!showConfirmPassword}
-                  value={confirmPassword}
-                  onChangeText={handleConfirmPasswordChange}
-                  onBlur={() => handleFieldBlur('confirmPassword')}
-                />
-                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                  <Icon
-                    name={showConfirmPassword ? "eye-slash" : "eye"}
-                    size={Math.min(13, W("3.5%"))}
-                    color="#888"
-                    style={{ marginRight: W("2%") }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {errors.confirmPassword && touched.confirmPassword && (
-                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%"), width: W("70%") }}>
-                  {errors.confirmPassword}
-                </Text>
-              )}
+              {/* Confirm Password */}
+              <InputField
+                label="Confirm Password"
+                icon="lock"
+                secure={!ui.showConfirmPassword}
+                toggleSecure={() =>
+                  setUi((prev) => ({
+                    ...prev,
+                    showConfirmPassword: !prev.showConfirmPassword,
+                  }))
+                }
+                value={form.confirmPassword}
+                onChange={(text) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    confirmPassword: text,
+                  }))
+                }
+                onBlur={() => handleBlur("confirmPassword")}
+                error={touched.confirmPassword && errors.confirmPassword}
+              />
 
-              {/* Terms and Conditions */}
-              <View style={{
-                flexDirection: "row",
-                left: W("10%"),
-                top: H("1%"),
-                alignItems: "center",
-                flexWrap: "wrap",
-                width: W("80%"),
-              }}>
+              {/* Terms */}
+              <View style={styles.termsRow}>
                 <TouchableOpacity
-                  onPress={handleTermsChange}
-                  style={{
-                    width: W("5%"),
-                    height: W("5%"),
-                    minWidth: 18,
-                    minHeight: 18,
-                    borderWidth: 1.5,
-                    borderColor: errors.terms ? "red" : "#555",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginRight: W("2%"),
-                    borderRadius: 4,
-                    backgroundColor: isChecked ? "rgba(143, 0, 255, 1)" : "transparent",
-                  }}
+                  onPress={() =>
+                    setUi((prev) => ({
+                      ...prev,
+                      isChecked: !prev.isChecked,
+                    }))
+                  }
+                  style={[
+                    styles.checkbox,
+                    {
+                      backgroundColor: ui.isChecked
+                        ? "rgba(143,0,255,1)"
+                        : "transparent",
+                      borderColor: errors.terms ? "red" : "#444",
+                    },
+                  ]}
                 >
-                  {isChecked && (
-                    <Text style={{ fontSize: Math.min(12, W("3.5%")), color: "white" }}>✓</Text>
-                  )}
+                  {ui.isChecked && <Text style={styles.checkmark}>✓</Text>}
                 </TouchableOpacity>
-                <Text style={{ fontSize: Math.min(13, W("3.5%")) }}>Agree with </Text>
-                <TouchableOpacity onPress={() => {
-                  // Navigate to Terms & Conditions screen
-                  props.navigation.navigate('TermsConditions');
-                }}>
-                  <Text style={{ color: "blue", textDecorationLine: "underline", fontSize: Math.min(13, W("3.5%")) }}>
-                    Terms & Conditions
-                  </Text>
+
+                <Text style={styles.termsText}>Agree with </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("TermsConditions")}
+                >
+                  <Text style={styles.termsLink}>Terms & Conditions</Text>
                 </TouchableOpacity>
               </View>
               {errors.terms && (
-                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), left: W("10%"), marginTop: H("0.5%") }}>
-                  {errors.terms}
-                </Text>
+                <Text style={styles.error}>{errors.terms}</Text>
               )}
 
-              {/* Sign Up Button */}
+              {/* Sign Up */}
               <TouchableOpacity
-                style={{
-                  alignSelf: "center",
-                  marginTop: H("3%"),
-                  backgroundColor: "rgba(255, 215, 0, 1)",
-                  height: Math.max(40, H("6%")),
-                  width: W("60%"),
-                  borderRadius: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  opacity: isLoading ? 0.7 : 1,
-                }}
+                style={[
+                  styles.button,
+                  { opacity: ui.isLoading ? 0.7 : 1 },
+                ]}
                 onPress={handleSignUp}
-                disabled={isLoading}
+                disabled={ui.isLoading}
               >
-                {isLoading ? (
+                {ui.isLoading ? (
                   <ActivityIndicator color="#000" />
                 ) : (
-                  <Text style={{ fontSize: Math.min(14, W("4%")), fontWeight: "bold" }}>Sign Up</Text>
+                  <Text style={styles.buttonText}>Sign Up</Text>
                 )}
               </TouchableOpacity>
 
               {/* Divider */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: H("2%"),
-                  width: W("60%"),
-                  alignSelf: "center",
-                }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    height: 1,
-                    backgroundColor: "rgba(217, 217, 217, 1)",
-                    marginHorizontal: W("2%"),
-                  }}
-                />
-                <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")) }}>or sign up with</Text>
-                <View
-                  style={{
-                    flex: 1,
-                    height: 1,
-                    backgroundColor: "rgba(217, 217, 217, 1)",
-                    marginHorizontal: W("2%"),
-                  }}
-                />
+              <View style={styles.dividerRow}>
+                <View style={styles.divider} />
+                <Text style={styles.dividerText}>or sign up with</Text>
+                <View style={styles.divider} />
               </View>
 
               {/* Social Icons */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  gap: Math.max(10, W("5%")),
-                  marginTop: H("2%"),
-                }}
-              >
-                <TouchableOpacity onPress={() => {
-                  // Handle Google sign up
-                  Alert.alert("Google Sign Up", "Coming soon!");
-                }}>
-                  <Image
-                    source={require("../../assets/icons/google.png")}
-                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                  // Handle Facebook sign up
-                  Alert.alert("Facebook Sign Up", "Coming soon!");
-                }}>
-                  <Image
-                    source={require("../../assets/icons/facebook.png")}
-                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                  // Handle Apple sign up
-                  Alert.alert("Apple Sign Up", "Coming soon!");
-                }}>
-                  <Image
-                    source={require("../../assets/icons/apple.png")}
-                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
-                  />
-                </TouchableOpacity>
+              <View style={styles.socialRow}>
+                {["google", "facebook", "apple"].map((icon, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => Alert.alert(`${icon} Sign Up`, "Coming soon!")}
+                  >
+                    <Image
+                      source={require(`../../assets/icons/${icon}.png`)}
+                      style={styles.socialIcon}
+                    />
+                  </TouchableOpacity>
+                ))}
               </View>
 
               {/* Footer */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  marginTop: H("2%"),
-                  marginBottom: H("2%"),
-                }}
-              >
-                <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")) }}>Already have an account? </Text>
-                <TouchableOpacity onPress={() => props.navigation.navigate('Login')}>
-                  <Text
-                    style={{
-                      color: "rgba(0, 153, 255, 1)",
-                      fontSize: Math.min(12, W("3.5%")),
-                      textDecorationLine: "underline",
-                    }}
-                  >
-                    Login
-                  </Text>
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>
+                  Already have an account?
+                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text style={styles.footerLink}> Login</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -687,5 +390,204 @@ const SignupScreen = (props) => {
     </KeyboardAvoidingView>
   );
 };
+
+// -------------------- STYLES --------------------
+
+const styles = StyleSheet.create({
+  bgImage: {
+    height: H("100%"),
+    width: W("100%"),
+    resizeMode: "cover",
+    position: "absolute",
+  },
+
+  gradient: {
+    position: "absolute",
+    top: H("15%"),
+    width: W("100%"),
+    height: H("100%"),
+  },
+
+  topBar: {
+    position: "absolute",
+    top: H("3%"),
+    width: W("100%"),
+    paddingHorizontal: W("5%"),
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  title: {
+    color: "white",
+    position: "absolute",
+    top: H("8%"),
+    alignSelf: "center",
+    fontSize: W("8%"),
+    fontWeight: "bold",
+  },
+
+  subtitle: {
+    color: "white",
+    position: "absolute",
+    top: H("14%"),
+    alignSelf: "center",
+    fontSize: W("4%"),
+    fontStyle: "italic",
+    textAlign: "center",
+  },
+
+  card: {
+    backgroundColor: "white",
+    height: H("75%"),
+    width: W("100%"),
+    position: "absolute",
+    bottom: 0,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingVertical: H("2%"),
+  },
+
+  cardTitle: {
+    fontSize: W("7%"),
+    alignSelf: "center",
+    fontWeight: "900",
+    marginBottom: H("1%"),
+  },
+
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: W("70%"),
+    alignSelf: "center",
+    marginTop: H("2%"),
+  },
+
+  label: {
+    marginLeft: W("2%"),
+    fontSize: W("4%"),
+    fontWeight: "bold",
+  },
+
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: W("70%"),
+    alignSelf: "center",
+    borderBottomWidth: 1,
+    marginTop: H("0.5%"),
+  },
+
+  input: {
+    flex: 1,
+    paddingVertical: H("1.2%"),
+    fontSize: W("3.5%"),
+  },
+
+  error: {
+    color: "red",
+    width: W("70%"),
+    alignSelf: "center",
+    fontSize: W("3%"),
+    marginTop: H("0.2%"),
+  },
+
+  termsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: W("75%"),
+    alignSelf: "center",
+    marginTop: H("2%"),
+  },
+
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderWidth: 1.5,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+    marginRight: W("2%"),
+  },
+
+  checkmark: {
+    color: "white",
+    fontSize: 12,
+  },
+
+  termsText: {
+    fontSize: W("3.5%"),
+  },
+
+  termsLink: {
+    color: "blue",
+    textDecorationLine: "underline",
+    fontSize: W("3.5%"),
+  },
+
+  button: {
+    backgroundColor: "rgba(255,215,0,1)",
+    height: H("6%"),
+    width: W("60%"),
+    alignSelf: "center",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: H("3%"),
+  },
+
+  buttonText: {
+    fontSize: W("4%"),
+    fontWeight: "bold",
+  },
+
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: W("60%"),
+    alignSelf: "center",
+    marginTop: H("2%"),
+  },
+
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#D9D9D9",
+  },
+
+  dividerText: {
+    color: "gray",
+    marginHorizontal: W("2%"),
+  },
+
+  socialRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: W("5%"),
+    marginTop: H("2%"),
+  },
+
+  socialIcon: {
+    height: W("8%"),
+    width: W("8%"),
+  },
+
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: H("2%"),
+    marginBottom: H("2%"),
+  },
+
+  footerText: {
+    color: "gray",
+    fontSize: W("3.5%"),
+  },
+
+  footerLink: {
+    color: "rgba(0,153,255,1)",
+    textDecorationLine: "underline",
+    fontSize: W("3.5%"),
+  },
+});
 
 export default SignupScreen;
