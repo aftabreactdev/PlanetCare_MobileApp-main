@@ -13,6 +13,8 @@ import ProfileSetupScreen2 from '../screens/profile/ProfileSetupScreen2';
 import MoodSelectionScreen from '../screens/profile/MoodSelectionScreen';
 import InterestSelectionScreen from '../screens/profile/InterestSelectionScreen';
 
+
+
 const Stack = createNativeStackNavigator();
 
 export default function AuthStack() {
@@ -30,6 +32,7 @@ export default function AuthStack() {
       <Stack.Screen
         name="InterestSelection"component={InterestSelectionScreen}
       />
+      
     </Stack.Navigator>
   );
 }
