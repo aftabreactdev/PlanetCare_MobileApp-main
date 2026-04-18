@@ -1,93 +1,102 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Dimensions, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Icon from "react-native-vector-icons/Ionicons";
 import Icons from "react-native-vector-icons/MaterialCommunityIcons";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 
-const { width: screenWidth } = Dimensions.get("window");
+const DEFAULT_ACTIONS = [
+  { label: "Check-in", icon: "happy-outline", type: "ion", key: "checkin" },
+  { label: "Journaling", icon: "document-text-outline", type: "ion", key: "journal" },
+  { label: "Join Pod", icon: "account-group", type: "material", key: "pod" },
+];
 
-const ActionButtons = () => {
-    // Responsive sizing based on screen width
-    const buttonWidth = screenWidth * 0.28; // 28% of screen width
-    const buttonHeight = screenWidth * 0.22; // Proportional height
-    const iconSize = screenWidth * 0.055; // Responsive icon size
-    const fontSize = screenWidth * 0.032; // Responsive font size
-    const borderRadius = screenWidth * 0.035; // Responsive border radius
-    const marginTop = screenWidth * 0.04;
+const ActionButtons = ({ actions = DEFAULT_ACTIONS, onPress }) => {
+  const handlePress = (item) => {
+    if (onPress) {
+      onPress(item);
+    }
+  };
 
-    return (
-        <View
-            style={{
-                flexDirection: "row",
-                justifyContent: "space-evenly", // Better spacing for responsiveness
-                marginHorizontal: screenWidth * 0.05,
-                marginTop: marginTop,
-            }}
-        >
-            {[
-                { label: "Check-in", icon: <Icon name="happy-outline" size={iconSize} color="#fff" /> },
-                { label: "Journaling", icon: <Icon name="document-text-outline" size={iconSize} color="#fff" /> },
-                { label: "Join Pod", icon: <Icons name="crowd" size={iconSize} color="#fff" /> },
-            ].map((item, i) => (
-                <TouchableOpacity 
-                    key={i} 
-                    style={{ 
-                        width: buttonWidth,
-                        // Pixel perfect: remove any unexpected spacing
-                        padding: 0,
-                        margin: 0,
-                    }}
-                    activeOpacity={0.8}
-                >
-                    <LinearGradient
-                        colors={["rgba(143, 0, 255, 0.5)", "rgba(0, 42, 138, 1)"]}
-                        style={{
-                            height: buttonHeight,
-                            borderRadius: borderRadius,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderWidth: 1,
-                            borderColor: "white",
-                            // Pixel perfect: explicit border radius values
-                            borderTopRightRadius: borderRadius,
-                            borderTopLeftRadius: borderRadius,
-                            borderBottomEndRadius: borderRadius,
-                            borderBottomLeftRadius: borderRadius,
-                            // Fix for Android pixel rounding issues
-                            ...Platform.select({
-                                android: {
-                                    borderWidth: 1,
-                                    elevation: 0,
-                                },
-                            }),
-                        }}
-                    >
-                        {item.icon}
-                        <Text 
-                            style={{ 
-                                color: "#fff", 
-                                marginTop: screenWidth * 0.015, 
-                                fontSize: fontSize,
-                                // Pixel perfect: ensure text doesn't wrap
-                                textAlign: "center",
-                                includeFontPadding: false,
-                                ...Platform.select({
-                                    android: {
-                                        textAlignVertical: "center",
-                                    },
-                                }),
-                            }}
-                            numberOfLines={1}
-                            adjustsFontSizeToFit
-                            minimumFontScale={0.8}
-                        >
-                            {item.label}
-                        </Text>
-                    </LinearGradient>
-                </TouchableOpacity>
-            ))}
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      {actions.map((item) => {
+        const IconComponent =
+          item.type === "material" ? Icons : Icon;
+
+        return (
+          <TouchableOpacity
+            key={item.key}
+            style={styles.buttonWrapper}
+            activeOpacity={0.85}
+            onPress={() => handlePress(item)}
+          >
+            <LinearGradient
+              colors={["rgba(143, 0, 255, 0.5)", "rgba(0, 42, 138, 1)"]}
+              style={styles.button}
+            >
+              <IconComponent
+                name={item.icon}
+                size={W("6%")}
+                color="#fff"
+              />
+
+              <Text style={styles.label} numberOfLines={1}>
+                {item.label}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
 };
 
 export default ActionButtons;
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: W("5%"),
+    marginTop: H("3%"),
+  },
+
+  buttonWrapper: {
+    width: W("28%"),
+  },
+
+  button: {
+    height: H("10%"),
+    borderRadius: W("4%"),
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
+    ...Platform.select({
+      android: {
+        elevation: 0,
+      },
+    }),
+  },
+
+  label: {
+    color: "#FFFFFF",
+    marginTop: H("0.8%"),
+    fontSize: W("3.2%"),
+    textAlign: "center",
+    includeFontPadding: false,
+    ...(Platform.OS === "android"
+      ? { textAlignVertical: "center" }
+      : {}),
+  },
+});

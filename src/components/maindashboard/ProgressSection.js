@@ -1,51 +1,52 @@
 import React from "react";
-import { View, Image, Dimensions, Platform } from "react-native";
-import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
+import { View, Image, StyleSheet } from "react-native";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 import CircularProgress from "./CircularProgress";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
-const ProgressSection = () => {
-  // Responsive sizing
-  const marginHorizontal = screenWidth * 0.05;
-  const marginTop = screenHeight * 0.05;
-  
-  // Responsive image dimensions
-  const imageWidth = screenWidth * 0.34;
-  const imageHeight = screenHeight * 0.06;
-  
-  // Calculate spacing between image and circular progress
-  const justifyContent = "space-between";
-
+const ProgressSection = ({
+  streakImage,
+  progress = 70,          // percentage (0–100)
+  goal = 100,
+  current = 70,
+}) => {
   return (
-    <View
-      style={{
-        marginHorizontal: marginHorizontal,
-        marginTop: marginTop,
-        flexDirection: "row",
-        justifyContent: justifyContent,
-        alignItems: "center",
-        // Pixel perfect: ensure no extra spacing
-        padding: 0,
-      }}
-    >
+    <View style={styles.container}>
+      {/* Left Image */}
       <Image
-        source={require("../../assets/images/streak.png")}
-        style={{ 
-          width: imageWidth, 
-          height: imageHeight,
-          // Pixel perfect: ensure image renders cleanly
-          resizeMode: "contain",
-          ...Platform.select({
-            android: {
-              borderWidth: 0,
-            },
-          }),
-        }}
+        source={
+          streakImage
+            ? { uri: streakImage }
+            : require("../../assets/images/streak.png")
+        }
+        style={styles.image}
+        resizeMode="contain"
       />
-      <CircularProgress />
+
+      {/* Right Progress */}
+      <CircularProgress
+        progress={progress}
+        goal={goal}
+        current={current}
+      />
     </View>
   );
 };
 
 export default ProgressSection;
+
+const styles = StyleSheet.create({
+  container: {
+    marginHorizontal: W("5%"),
+    marginTop: H("4%"),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  image: {
+    width: W("35%"),
+    height: H("6%"),
+  },
+});

@@ -1,234 +1,237 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
-} from "react-native";
-import LinearGradient from "react-native-linear-gradient";
-import RadialGradient from "react-native-radial-gradient";
-import Icons from "react-native-vector-icons/Ionicons";
+  StyleSheet,
+  Image,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import RadialGradient from 'react-native-radial-gradient';
+import Icons from 'react-native-vector-icons/Ionicons';
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from 'react-native-responsive-screen';
 
+import MoodSection from '../../components/homedashboad2/MoodSection';
+import ActivityItem from '../../components/homedashboad2/ActivityItem';
+import RecommendationCard from '../../components/homedashboad2/RecommendationCard';
+import ActionButtons from '../../components/maindashboard/ActionButtons';
 
-import Header from "../../components/homedashboad2/Header";
-import MoodSection from "../../components/homedashboad2/MoodSection";
-import ActivityItem from "../../components/homedashboad2/ActivityItem";
-import RecommendationCard from "../../components/homedashboad2/RecommendationCard";
-import ActionButtons from "../../components/maindashboard/ActionButtons";
+const ACTIVITIES = [
+  {
+    id: 1,
+    leftIcon: require('../../assets/icons/greentick.png'),
+    secondaryIcon: require('../../assets/icons/moringmood.png'),
+    title: 'Morning Check-in',
+    subtitle: 'Daily emotion track',
+    time: '08:00 AM',
+    date: 'July 20',
+    titleStyle: { right: 10 },
+    subtitleStyle: { marginRight: 25 },
+  },
+  {
+    id: 2,
+    leftIcon: require('../../assets/icons/redcross.png'),
+    secondaryIcon: require('../../assets/icons/jurnelmood.png'),
+    title: 'Journal',
+    subtitle: 'I wrote about my۔۔۔۔',
+    time: '00:00 AM',
+    date: 'July 20',
+    titleStyle: { right: 40 },
+    subtitleStyle: { marginRight: 25 },
+  },
+  {
+    id: 3,
+    leftIcon: require('../../assets/icons/redcross.png'),
+    secondaryIcon: require('../../assets/icons/activitiesmood.png'),
+    title: 'Activities',
+    subtitle: 'Meditation, Reading',
+    time: '00:00 AM',
+    date: 'July 20',
+    titleStyle: { right: 40 },
+    subtitleStyle: { marginRight: 25 },
+  },
+];
 
-const DailySnapshot = ({ navigation }) => {  // ← FIX: Added navigation prop
-  // Data for activities with individual styles
-  const activities = [
-    {
-      id: 1,
-      leftIcon: require("../../assets/icons/greentick.png"),
-      secondaryIcon: require("../../assets/icons/moringmood.png"),
-      title: "Morning Check-in",
-      subtitle: "Daily emotion track",
-      time: "08:00 AM",
-      date: "July 20",
-      titleStyle: { right: 10 },
-      subtitleStyle: { marginRight: 25 },
-    },
-    {
-      id: 2,
-      leftIcon: require("../../assets/icons/redcross.png"),
-      secondaryIcon: require("../../assets/icons/jurnelmood.png"),
-      title: "Journal",
-      subtitle: "I wrote about my۔۔۔۔",
-      time: "00:00 AM",
-      date: "July 20",
-      titleStyle: { right: 40 },
-      subtitleStyle: { marginRight: 25 },
-    },
-    {
-      id: 3,
-      leftIcon: require("../../assets/icons/redcross.png"),
-      secondaryIcon: require("../../assets/icons/activitiesmood.png"),
-      title: "Activities",
-      subtitle: "Meditation, Reading",
-      time: "00:00 AM",
-      date: "July 20",
-      titleStyle: { right: 40 },
-      subtitleStyle: { marginRight: 25 },
-    },
-  ];
+const RECOMMENDATIONS = [
+  {
+    id: 1,
+    icon: require('../../assets/icons/blub.png'),
+    title: 'A tip for today:',
+    description: 'take 3 deep breaths before journaling',
+    titleStyle: { right: 50 },
+  },
+  {
+    id: 2,
+    icon: require('../../assets/icons/v.png'),
+    title: 'Suggested journal prompt:',
+    description: 'What is something I need to let go of?',
+    titleStyle: { right: 20 },
+  },
+  {
+    id: 3,
+    icon: require('../../assets/icons/v.png'),
+    title: 'Emily S.',
+    description: 'What is something I need to let go of?',
+    titleStyle: { right: 60 },
+  },
+];
 
-  // Data for recommendations with individual styles
-  const recommendations = [
-    {
-      id: 1,
-      icon: require("../../assets/icons/blub.png"),
-      title: "A tip for today:",
-      description: "take 3 deep breaths before journaling",
-      titleStyle: { right: 50 },
-      descriptionStyle: {},
-    },
-    {
-      id: 2,
-      icon: require("../../assets/icons/v.png"),
-      title: "Suggested journal prompt:",
-      description: "What is something I need to let go of?",
-      titleStyle: { right: 20 },
-      descriptionStyle: { marginTop: 5 },
-    },
-    {
-      id: 3,
-      icon: require("../../assets/icons/v.png"),
-      title: "Emily S.",
-      description: "What is something I need to let go of?",
-      titleStyle: { right: 60 },
-      descriptionStyle: { left: 10 },
-    },
-  ];
-
-  // Event handlers
-  const handleNotificationPress = () => {
-    console.log("Notification pressed");
-    // Add your navigation or logic here
-  };
-
-  const handleProfilePress = () => {
-    console.log("Profile pressed");
-    // Add your navigation or logic here
-  };
-
-  const handleActivityPress = (activityTitle) => {
-    console.log(`${activityTitle} pressed`);
-    // Add your navigation or logic here
-  };
-
-  const handleRecommendationPress = (recommendationTitle) => {
-    console.log(`${recommendationTitle} pressed`);
-    // Add your navigation or logic here
-  };
-
-  const handleBackPress = () => {
-    navigation.goBack();  // ← Use navigation prop
-  };
-
+const DailySnapshot = ({ navigation }) => {
   return (
     <LinearGradient
-      colors={["rgba(0, 11, 36, 1)", "rgba(4, 84, 204, 1)"]}
-      style={{ flex: 1, padding: 0 }}
+      colors={['rgba(0, 11, 36, 1)', 'rgba(4, 84, 204, 1)']}
+      style={styles.container}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View
+          style={{
+            height: 110,
+            paddingTop: 10,
+            paddingHorizontal: 22,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottomLeftRadius: 18,
+            borderBottomRightRadius: 18,
+            backgroundColor: '#00143A',
 
-        {/* Back Button */}
-        <TouchableOpacity
-          onPress={handleBackPress}  // ← FIX: Use the handler function
-          style={{ top: 30, marginLeft: 15, zIndex: 1 }}  // ← Added zIndex to ensure button is clickable
+          }}
         >
-          <Icons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
-        
-        {/* Header Component */}
-        <Header
-          title="Daily Snapshot"
-          subtitle="Today, July 30"
-          onNotificationPress={handleNotificationPress}
-          onProfilePress={handleProfilePress}
-          profileImage={require("../../assets/images/profile.png")}
-        />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icons name="arrow-back" size={30} color="#FFFFFF" />
+          </TouchableOpacity>
 
-        {/* Radial Gradient Background Effect */}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => console.log('Notification')}
+              style={{ marginRight: 18 }}
+            >
+              <Icons name="notifications" size={28} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => console.log('Profile')}>
+              <Image
+                source={require('../../assets/images/profile.png')}
+                style={{
+                  width: 54,
+                  height: 54,
+                  borderRadius: 27,
+                  backgroundColor: '#19A7FF',
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+           <Text
+      style={{
+        position: "absolute",
+        top: H('10%'), // adjust this value to move up/down
+        color: "white",
+        fontSize: 20,
+        fontWeight: "bold",
+        alignSelf: "center",
+        zIndex: 10,
+      }}
+    >
+      Daily Snapshot
+    </Text>
+
+       
+
         <RadialGradient
           colors={[
-            "rgba(143, 0, 255, 1)",
-            "rgba(143, 0, 250, 0.6)",
-            "rgba(160, 80, 220, 0.2)",
-            "rgba(200, 120, 255, 0.0)",
+            'rgba(143, 0, 255, 1)',
+            'rgba(143, 0, 250, 0.6)',
+            'rgba(160, 80, 220, 0.2)',
+            'rgba(200, 120, 255, 0.0)',
           ]}
           stops={[0.2, 0.8, 0.9, 1]}
           center={[200, 200]}
           radius={200}
-          style={{
-            position: "absolute",
-            width: 400,
-            height: 400,
-            borderRadius: 200,
-            top: 50,
-            alignSelf: "center",
-            opacity: 0.6,
-          }}
+          style={styles.radialGlow}
         />
 
-        {/* Mood Section Component */}
         <MoodSection
-          moodImage={require("../../assets/images/smile.png")}
+          moodImage={require('../../assets/images/smile.png')}
           moodText="Your mood was good"
         />
 
-        {/* Activities Section */}
-        <View
-          style={{
-            flexDirection: "column",
-            justifyContent: "space-between",
-            marginHorizontal: 20,
-            marginTop: 15,
-            gap: 10,
-          }}
-        >
-          {activities.map((activity) => (
+        {/* Activities */}
+        <View style={styles.activitiesContainer}>
+          {ACTIVITIES.map(item => (
             <ActivityItem
-              key={activity.id}
-              leftIcon={activity.leftIcon}
-              secondaryIcon={activity.secondaryIcon}
-              title={activity.title}
-              subtitle={activity.subtitle}
-              time={activity.time}
-              date={activity.date}
-              titleStyle={activity.titleStyle}
-              subtitleStyle={activity.subtitleStyle}
-              onPress={() => handleActivityPress(activity.title)}
+              key={item.id}
+              {...item}
+              onPress={() => console.log(`${item.title} pressed`)}
             />
           ))}
         </View>
 
-        {/* Action Buttons Component */}
         <ActionButtons />
 
-        {/* Recommendations Header */}
-        <Text
-          style={{
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: 18,
-            left: 20,
-            top: 10,
-          }}
-        >
-          Recommendation
-        </Text>
+        <Text style={styles.recommendationTitle}>Recommendation</Text>
 
-        {/* Recommendations Section */}
-        <View
-          style={{
-            flexDirection: "column",
-            justifyContent: "space-around",
-            marginTop: 20,
-            marginBottom: 30,
-            alignSelf: "center",
-            gap: 10,
-          }}
-        >
-          {recommendations.map((rec) => (
+        <View style={styles.recommendationsContainer}>
+          {RECOMMENDATIONS.map(item => (
             <RecommendationCard
-              key={rec.id}
-              icon={rec.icon}
-              title={rec.title}
-              description={rec.description}
-              titleStyle={rec.titleStyle}
-              descriptionStyle={rec.descriptionStyle}
-              onPress={() => handleRecommendationPress(rec.title)}
+              key={item.id}
+              {...item}
+              onPress={() => console.log(`${item.title} pressed`)}
             />
           ))}
         </View>
-
-        <View style={{ height: 50 }} /> 
       </ScrollView>
     </LinearGradient>
   );
 };
 
 export default DailySnapshot;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 50,
+  },
+  backButton: {
+    top: 30,
+    marginLeft: 15,
+    zIndex: 10,
+  },
+  radialGlow: {
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    top: 50,
+    alignSelf: 'center',
+    opacity: 0.6,
+  },
+  activitiesContainer: {
+    marginHorizontal: 20,
+    marginTop: 15,
+    gap: 10,
+  },
+  recommendationTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginLeft: 20,
+    marginTop: 10,
+  },
+  recommendationsContainer: {
+    marginTop: 20,
+    marginBottom: 30,
+    alignSelf: 'center',
+    gap: 10,
+  },
+});

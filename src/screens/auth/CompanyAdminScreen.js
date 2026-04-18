@@ -1,678 +1,825 @@
 import React, { useState } from "react";
-import { Text, View, Image, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import RadialGradient from "react-native-radial-gradient";
-import Icon from "react-native-vector-icons/FontAwesome";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
-import {widthPercentageToDP as W, heightPercentageToDP as H} from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 
-const CompanyAdmin = (props) => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
-    
-    // Form data states
-    const [fullName, setFullName] = useState("");
-    const [companyName, setCompanyName] = useState("");
-    const [companyEmail, setCompanyEmail] = useState("");
-    const [companySize, setCompanySize] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    
-    // Error states
-    const [errors, setErrors] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
+const COLORS = {
+  white: "#FFFFFF",
+  black: "#111111",
+  gray: "#7A7A7A",
+  lightGray: "#D9D9D9",
+  border: "#D9D9D9",
+  error: "#E53935",
+  success: "#2E7D32",
+  primary: "rgba(143, 0, 255, 1)",
+  yellow: "rgba(255, 215, 0, 1)",
+  blue: "rgba(0, 153, 255, 1)",
+  placeholder: "#9A9A9A",
+};
 
-    // Validation functions
-    const validateFullName = (name) => {
-        if (!name.trim()) return "Full name is required";
-        if (name.trim().length < 2) return "Full name must be at least 2 characters";
-        if (!/^[a-zA-Z\s]+$/.test(name)) return "Full name can only contain letters and spaces";
-        return "";
+const CompanyAdmin = ({ navigation }) => {
+  const [form, setForm] = useState({
+    fullName: "",
+    companyName: "",
+    companyEmail: "",
+    companySize: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [ui, setUi] = useState({
+    showPassword: false,
+    showConfirmPassword: false,
+    isChecked: false,
+    isLoading: false,
+  });
+
+  const [errors, setErrors] = useState({
+    fullName: "",
+    companyName: "",
+    companyEmail: "",
+    companySize: "",
+    password: "",
+    confirmPassword: "",
+    terms: "",
+  });
+
+  const [touched, setTouched] = useState({
+    fullName: false,
+    companyName: false,
+    companyEmail: false,
+    companySize: false,
+    password: false,
+    confirmPassword: false,
+  });
+
+  const validateFullName = (name) => {
+    const value = name.trim();
+
+    if (!value) return "Please enter your full name";
+    if (value.length < 2) return "Name must be at least 2 characters";
+    if (value.length > 50) return "Name must be less than 50 characters";
+    if (!/^[a-zA-Z\s]+$/.test(value)) {
+      return "Only letters and spaces are allowed";
+    }
+
+    return "";
+  };
+
+  const validateCompanyName = (name) => {
+    const value = name.trim();
+
+    if (!value) return "Please enter your company name";
+    if (value.length < 2) return "Company name must be at least 2 characters";
+    if (value.length > 80) return "Company name must be less than 80 characters";
+
+    return "";
+  };
+
+  const validateCompanyEmail = (email) => {
+    const value = email.trim();
+
+    if (!value) return "Please enter your company email address";
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return "Enter a valid email address";
+    }
+
+    return "";
+  };
+
+  const validateCompanySize = (size) => {
+    const value = size.trim();
+
+    if (!value) return "Please enter your company size";
+
+    const sizeRegex = /^(\d+-\d+|\d+\+|\d+)$/;
+    if (!sizeRegex.test(value)) {
+      return "Use a format like 50, 50-200, or 100+";
+    }
+
+    return "";
+  };
+
+  const validatePassword = (pwd) => {
+    if (!pwd) return "Please enter your password";
+    if (pwd.length < 6) return "Password must be at least 6 characters";
+    if (!/(?=.*[A-Z])/.test(pwd)) {
+      return "Password must include at least one uppercase letter";
+    }
+    if (!/(?=.*[a-z])/.test(pwd)) {
+      return "Password must include at least one lowercase letter";
+    }
+    if (!/(?=.*[0-9])/.test(pwd)) {
+      return "Password must include at least one number";
+    }
+    if (!/(?=.*[!@#$%^&*])/.test(pwd)) {
+      return "Password must include one special character";
+    }
+
+    return "";
+  };
+
+  const validateConfirmPassword = (pwd, confirmPwd) => {
+    if (!confirmPwd) return "Please confirm your password";
+    if (pwd !== confirmPwd) return "Passwords do not match";
+    return "";
+  };
+
+  const validateTerms = (checked) => {
+    return checked ? "" : "Please accept the Terms & Conditions";
+  };
+
+  const setFieldTouched = (field) => {
+    setTouched((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+  };
+
+  const validateSingleField = (field, updatedForm = form) => {
+    let message = "";
+
+    switch (field) {
+      case "fullName":
+        message = validateFullName(updatedForm.fullName);
+        break;
+      case "companyName":
+        message = validateCompanyName(updatedForm.companyName);
+        break;
+      case "companyEmail":
+        message = validateCompanyEmail(updatedForm.companyEmail);
+        break;
+      case "companySize":
+        message = validateCompanySize(updatedForm.companySize);
+        break;
+      case "password":
+        message = validatePassword(updatedForm.password);
+        break;
+      case "confirmPassword":
+        message = validateConfirmPassword(
+          updatedForm.password,
+          updatedForm.confirmPassword
+        );
+        break;
+      default:
+        break;
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: message,
+    }));
+  };
+
+  const handleInputChange = (field, value) => {
+    const updatedForm = {
+      ...form,
+      [field]: value,
     };
 
-    const validateCompanyName = (name) => {
-        if (!name.trim()) return "Company name is required";
-        if (name.trim().length < 2) return "Company name must be at least 2 characters";
-        return "";
+    setForm(updatedForm);
+
+    if (touched[field]) {
+      validateSingleField(field, updatedForm);
+    }
+
+    if (field === "password" && touched.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: validateConfirmPassword(
+          updatedForm.password,
+          updatedForm.confirmPassword
+        ),
+      }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setFieldTouched(field);
+    validateSingleField(field);
+  };
+
+  const handleTermsChange = () => {
+    const nextChecked = !ui.isChecked;
+
+    setUi((prev) => ({
+      ...prev,
+      isChecked: nextChecked,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      terms: validateTerms(nextChecked),
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      fullName: validateFullName(form.fullName),
+      companyName: validateCompanyName(form.companyName),
+      companyEmail: validateCompanyEmail(form.companyEmail),
+      companySize: validateCompanySize(form.companySize),
+      password: validatePassword(form.password),
+      confirmPassword: validateConfirmPassword(
+        form.password,
+        form.confirmPassword
+      ),
+      terms: validateTerms(ui.isChecked),
     };
 
-    const validateCompanyEmail = (email) => {
-        if (!email.trim()) return "Company email is required";
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) return "Please enter a valid email address";
-        return "";
-    };
+    setErrors(newErrors);
 
-    const validateCompanySize = (size) => {
-        if (!size.trim()) return "Company size is required";
-        const sizeRegex = /^(\d+-\d+|\d+\+|\d+)$/;
-        if (!sizeRegex.test(size)) return "Please enter valid company size (e.g., 50-200, 100+, 50)";
-        return "";
-    };
+    setTouched({
+      fullName: true,
+      companyName: true,
+      companyEmail: true,
+      companySize: true,
+      password: true,
+      confirmPassword: true,
+    });
 
-    const validatePassword = (pwd) => {
-        if (!pwd) return "Password is required";
-        if (pwd.length < 6) return "Password must be at least 6 characters";
-        if (!/(?=.*[A-Z])/.test(pwd)) return "Password must contain at least one uppercase letter";
-        if (!/(?=.*[a-z])/.test(pwd)) return "Password must contain at least one lowercase letter";
-        if (!/(?=.*[0-9])/.test(pwd)) return "Password must contain at least one number";
-        if (!/(?=.*[!@#$%^&*])/.test(pwd)) return "Password must contain at least one special character (!@#$%^&*)";
-        return "";
-    };
+    return Object.values(newErrors).every((item) => item === "");
+  };
 
-    const validateConfirmPassword = (pwd, confirmPwd) => {
-        if (!confirmPwd) return "Please confirm your password";
-        if (pwd !== confirmPwd) return "Passwords do not match";
-        return "";
-    };
+  const handleSignUp = async () => {
+    const isValid = validateForm();
 
-    const validateTermsAndConditions = () => {
-        if (!isChecked) return "You must agree to the Terms & Conditions";
-        return "";
-    };
+    if (!isValid) {
+      Alert.alert(
+        "Incomplete Information",
+        "Please fix the highlighted fields before continuing."
+      );
+      return;
+    }
 
-    // Real-time validation handlers
-    const handleFullNameChange = (text) => {
-        setFullName(text);
-        const error = validateFullName(text);
-        setErrors(prev => ({ ...prev, fullName: error }));
-    };
+    try {
+      setUi((prev) => ({
+        ...prev,
+        isLoading: true,
+      }));
 
-    const handleCompanyNameChange = (text) => {
-        setCompanyName(text);
-        const error = validateCompanyName(text);
-        setErrors(prev => ({ ...prev, companyName: error }));
-    };
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const handleCompanyEmailChange = (text) => {
-        setCompanyEmail(text);
-        const error = validateCompanyEmail(text);
-        setErrors(prev => ({ ...prev, companyEmail: error }));
-    };
+      Alert.alert("Success", "Account created successfully!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("MoodSelection"),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert(
+        "Sign Up Failed",
+        error?.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setUi((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+    }
+  };
 
-    const handleCompanySizeChange = (text) => {
-        setCompanySize(text);
-        const error = validateCompanySize(text);
-        setErrors(prev => ({ ...prev, companySize: error }));
-    };
-
-    const handlePasswordChange = (text) => {
-        setPassword(text);
-        const error = validatePassword(text);
-        setErrors(prev => ({ ...prev, password: error }));
-        
-        // Also re-validate confirm password if it exists
-        if (confirmPassword) {
-            const confirmError = validateConfirmPassword(text, confirmPassword);
-            setErrors(prev => ({ ...prev, confirmPassword: confirmError }));
-        }
-    };
-
-    const handleConfirmPasswordChange = (text) => {
-        setConfirmPassword(text);
-        const error = validateConfirmPassword(password, text);
-        setErrors(prev => ({ ...prev, confirmPassword: error }));
-    };
-
-    const handleTermsChange = () => {
-        setIsChecked(!isChecked);
-        if (errors.terms) {
-            setErrors(prev => ({ ...prev, terms: "" }));
-        }
-    };
-
-    // Submit handler
-    const handleSignUp = async () => {
-        // Validate all fields
-        const fullNameError = validateFullName(fullName);
-        const companyNameError = validateCompanyName(companyName);
-        const companyEmailError = validateCompanyEmail(companyEmail);
-        const companySizeError = validateCompanySize(companySize);
-        const passwordError = validatePassword(password);
-        const confirmPasswordError = validateConfirmPassword(password, confirmPassword);
-        const termsError = validateTermsAndConditions();
-
-        const newErrors = {
-            fullName: fullNameError,
-            companyName: companyNameError,
-            companyEmail: companyEmailError,
-            companySize: companySizeError,
-            password: passwordError,
-            confirmPassword: confirmPasswordError,
-            terms: termsError,
-        };
-
-        setErrors(newErrors);
-
-        // Check if there are any errors
-        const hasErrors = Object.values(newErrors).some(error => error !== "");
-        
-        if (hasErrors) {
-            // Show first error in alert
-            const firstError = Object.values(newErrors).find(error => error !== "");
-            Alert.alert("Validation Error", firstError);
-            return;
-        }
-
-        // Proceed with sign up
-        setIsLoading(true);
-        
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Success - navigate to next screen
-            Alert.alert(
-                "Success",
-                "Account created successfully!",
-                [
-                    {
-                        text: "OK",
-                        onPress: () => props.navigation.navigate('MoodSelection')
-                    }
-                ]
-            );
-            
-        } catch (error) {
-            Alert.alert("Error", "Failed to create account. Please try again.");
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  const ErrorMessage = ({ message }) => {
+    if (!message) return null;
 
     return (
-        <KeyboardAvoidingView 
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1, backgroundColor: '#fff' }}
-        >
-            <ScrollView 
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1 }}
-                style={{ flex: 1, backgroundColor: '#fff' }}
-            >
-                <View style={{ position: "relative" }}>
-                    {/* Background Image */}
-                    <Image 
-                        source={require("../../assets/images/Splashbackground.jpg")}
-                        style={{ height: H("100%"), width: W("100%"), position: "absolute" }}
-                        resizeMode="cover"
-                    />
-
-                    {/* Purple Glow */}
-                    <RadialGradient
-                        colors={[
-                            "rgba(143, 0, 255, 1)",
-                            "rgba(143, 0, 250, 0.6)",
-                            "rgba(160, 80, 220, 0.2)",
-                            "rgba(200, 120, 255, 0.0)",
-                        ]}
-                        stops={[0.1, 0.5, 0.7, 0.9]}
-                        center={[W("50%"), H("35%")]}
-                        radius={W("80%")}
-                        style={{
-                            position: "absolute",
-                            top: H("0%"),
-                            alignSelf: "center",
-                            width: W("100%"),
-                            height: H("60%"),
-                            borderRadius: H("0%"),
-                        }}
-                    />
-                    
-                    {/* Navigation Buttons */}
-                    <View style={{ flexDirection: "row", position: "absolute", width: W("100%"), justifyContent: "space-between", paddingHorizontal: W("5%"), zIndex: 10 }}>
-                        <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                            <Ionicons name="arrow-back" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('Roleselection')}>
-                            <Entypo name="cross" size={Math.min(24, W("6%"))} color="white" style={{ top: H("3%") }} />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Header */}
-                    <Text
-                        style={{
-                            color: "white",
-                            position: "absolute",
-                            top: H("8%"),
-                            alignSelf: "center",
-                            fontSize: Math.min(30, W("8%")),
-                            fontWeight: "bold",
-                            zIndex: 10,
-                        }}
-                    >
-                        Create Account
-                    </Text>
-
-                    <Text
-                        style={{
-                            color: "white",
-                            position: "absolute",
-                            top: H("14%"),
-                            alignSelf: "center",
-                            fontSize: Math.min(15, W("4%")),
-                            fontStyle: "italic",
-                            textAlign: "center",
-                            paddingHorizontal: W("5%"),
-                            zIndex: 10,
-                        }}
-                    >
-                        Set up your Company on {"\n"}Planet Care
-                    </Text>
-
-                    {/* White Form Card - Removed fixed height and adjusted width */}
-                    <View
-                        style={{
-                            backgroundColor: "white",
-                            width: W("100%"),
-                            borderTopLeftRadius: 30,
-                            borderTopRightRadius: 30,
-                            alignSelf: "center",
-                            marginTop: H("22%"),
-                            paddingBottom: H("5%"),
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontSize: Math.min(25, W("7%")),
-                                alignSelf: "center",
-                                fontWeight: "900",
-                                marginTop: H("3%"),
-                            }}
-                        >
-                            Sign Up
-                        </Text>
-
-                        {/* Full Name */}
-                        <View style={{ marginTop: H("2%") }}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    width: W("70%"),
-                                }}
-                            >
-                                <Icon name="user" size={Math.min(12, W("3.5%"))} color="black" />
-                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Full Name</Text>
-                            </View>
-                            <TextInput
-                                style={{
-                                    alignSelf: "center",
-                                    borderBottomWidth: 1,
-                                    borderColor: errors.fullName ? "red" : "rgba(217, 217, 217, 1)",
-                                    width: W("70%"),
-                                    fontSize: Math.min(13, W("3.5%")),
-                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
-                                }}
-                                placeholder="Daniel Park"
-                                value={fullName}
-                                onChangeText={handleFullNameChange}
-                            />
-                            {errors.fullName ? (
-                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
-                                    {errors.fullName}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        {/* Company Name */}
-                        <View style={{ marginTop: H("2%") }}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    width: W("70%"),
-                                }}
-                            >
-                                <Icon name="building-o" size={Math.min(12, W("3.5%"))} color="black" />
-                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Company Name</Text>
-                            </View>
-                            <TextInput
-                                style={{
-                                    alignSelf: "center",
-                                    borderBottomWidth: 1,
-                                    borderColor: errors.companyName ? "red" : "rgba(217, 217, 217, 1)",
-                                    width: W("70%"),
-                                    fontSize: Math.min(13, W("3.5%")),
-                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
-                                }}
-                                placeholder="Planet Care Inc."
-                                value={companyName}
-                                onChangeText={handleCompanyNameChange}
-                            />
-                            {errors.companyName ? (
-                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
-                                    {errors.companyName}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        {/* Company Email */}
-                        <View style={{ marginTop: H("2%") }}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    width: W("70%"),
-                                }}
-                            >
-                                <Icon name="envelope" size={Math.min(12, W("3.5%"))} color="black" />
-                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Company Email</Text>
-                            </View>
-                            <TextInput
-                                style={{
-                                    alignSelf: "center",
-                                    borderBottomWidth: 1,
-                                    borderColor: errors.companyEmail ? "red" : "rgba(217, 217, 217, 1)",
-                                    width: W("70%"),
-                                    fontSize: Math.min(13, W("3.5%")),
-                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
-                                }}
-                                placeholder="example@gmail.com"
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                value={companyEmail}
-                                onChangeText={handleCompanyEmailChange}
-                            />
-                            {errors.companyEmail ? (
-                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
-                                    {errors.companyEmail}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        {/* Company Size */}
-                        <View style={{ marginTop: H("2%") }}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    width: W("70%"),
-                                }}
-                            >
-                                <Ionicons name="people" size={Math.min(12, W("3.5%"))} color="black" />
-                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(12, W("3.5%")) }}>Company Size</Text>
-                            </View>
-                            <TextInput
-                                style={{
-                                    alignSelf: "center",
-                                    borderBottomWidth: 1,
-                                    borderColor: errors.companySize ? "red" : "rgba(217, 217, 217, 1)",
-                                    width: W("70%"),
-                                    fontSize: Math.min(13, W("3.5%")),
-                                    paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%"),
-                                }}
-                                placeholder="50-200"
-                                value={companySize}
-                                onChangeText={handleCompanySizeChange}
-                            />
-                            {errors.companySize ? (
-                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
-                                    {errors.companySize}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        {/* Password */}
-                        <View style={{ marginTop: H("2%") }}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    width: W("70%"),
-                                }}
-                            >
-                                <Icon name="lock" size={Math.min(12, W("3.5%"))} color="black" />
-                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(13, W("3.5%")) }}>Set Password</Text>
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    borderBottomWidth: 1,
-                                    borderColor: errors.password ? "red" : "rgba(217, 217, 217, 1)",
-                                    width: W("70%"),
-                                    alignSelf: "center",
-                                }}
-                            >
-                                <TextInput
-                                    style={{
-                                        flex: 1,
-                                        paddingHorizontal: W("2%"),
-                                        paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
-                                        fontSize: Math.min(13, W("3.5%")),
-                                    }}
-                                    placeholder="Enter password"
-                                    secureTextEntry={!showPassword}
-                                    value={password}
-                                    onChangeText={handlePasswordChange}
-                                />
-                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                    <Icon
-                                        name={showPassword ? "eye-slash" : "eye"}
-                                        size={Math.min(13, W("3.5%"))}
-                                        color="#888"
-                                        style={{ marginRight: W("2%") }}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                            {errors.password ? (
-                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
-                                    {errors.password}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        {/* Confirm Password */}
-                        <View style={{ marginTop: H("2%") }}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    width: W("70%"),
-                                }}
-                            >
-                                <Icon name="lock" size={Math.min(12, W("3.5%"))} color="black" />
-                                <Text style={{ fontWeight: "bold", marginLeft: W("2%"), fontSize: Math.min(13, W("3.5%")) }}>Confirm Password</Text>
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    borderBottomWidth: 1,
-                                    borderColor: errors.confirmPassword ? "red" : "rgba(217, 217, 217, 1)",
-                                    width: W("70%"),
-                                    alignSelf: "center",
-                                }}
-                            >
-                                <TextInput
-                                    style={{
-                                        flex: 1,
-                                        paddingHorizontal: W("2%"),
-                                        paddingVertical: Platform.OS === "ios" ? H("1.5%") : H("0.8%"),
-                                        fontSize: Math.min(13, W("3.5%")),
-                                    }}
-                                    placeholder="Confirm password"
-                                    secureTextEntry={!showConfirmPassword}
-                                    value={confirmPassword}
-                                    onChangeText={handleConfirmPasswordChange}
-                                />
-                                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                    <Icon
-                                        name={showConfirmPassword ? "eye-slash" : "eye"}
-                                        size={Math.min(13, W("3.5%"))}
-                                        color="#888"
-                                        style={{ marginRight: W("2%") }}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                            {errors.confirmPassword ? (
-                                <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.3%") }}>
-                                    {errors.confirmPassword}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        {/* Terms & Conditions */}
-                        <View style={{
-                            flexDirection: "row",
-                            alignSelf: "center",
-                            marginTop: H("2%"),
-                            alignItems: "center",
-                            flexWrap: "wrap",
-                        }}>
-                            <TouchableOpacity
-                                onPress={handleTermsChange}
-                                style={{
-                                    width: Math.max(15, W("4%")),
-                                    height: Math.max(15, W("4%")),
-                                    borderWidth: 1.5,
-                                    borderColor: errors.terms ? "red" : "#555",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginRight: W("1%"),
-                                    borderRadius: 4,
-                                    overflow: "hidden",
-                                }}
-                            >
-                                {isChecked && (
-                                    <Text style={{ fontSize: Math.min(10, W("3%")), color: "white", backgroundColor: "rgba(143, 0, 255, 1)", textAlign: "center", lineHeight: Math.max(15, W("4%")) }}>✔</Text>
-                                )}
-                            </TouchableOpacity>
-                            <Text style={{ fontSize: Math.min(13, W("3.5%")) }}>Agree with </Text>
-                            <TouchableOpacity>
-                                <Text style={{ color: "blue", textDecorationLine: "underline", fontSize: Math.min(13, W("3.5%")) }}>
-                                    Terms & Conditions
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                        {errors.terms ? (
-                            <Text style={{ color: "red", fontSize: Math.min(11, W("3%")), alignSelf: "center", marginTop: H("0.5%") }}>
-                                {errors.terms}
-                            </Text>
-                        ) : null}
-
-                        {/* Sign Up Button */}
-                        <TouchableOpacity
-                            style={{
-                                alignSelf: "center",
-                                marginTop: H("2.5%"),
-                                backgroundColor: "rgba(255, 215, 0, 1)",
-                                height: Math.max(35, H("5%")),
-                                width: W("60%"),
-                                borderRadius: 10,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                opacity: isLoading ? 0.7 : 1,
-                            }}
-                            onPress={handleSignUp}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <ActivityIndicator color="#000" />
-                            ) : (
-                                <Text style={{ fontSize: Math.min(14, W("4%")), fontWeight: "bold" }}>
-                                    Sign Up
-                                </Text>
-                            )}
-                        </TouchableOpacity>
-
-                        {/* Divider */}
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                alignSelf: "center",
-                                marginTop: H("2%"),
-                                width: W("60%"),
-                            }}
-                        >
-                            <View
-                                style={{
-                                    flex: 1,
-                                    height: 1,
-                                    backgroundColor: "rgba(217, 217, 217, 1)",
-                                    marginRight: W("2%"),
-                                }}
-                            />
-                            <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")), textAlign: "center" }}>
-                                or sign up with
-                            </Text>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    height: 1,
-                                    backgroundColor: "rgba(217, 217, 217, 1)",
-                                    marginLeft: W("2%"),
-                                }}
-                            />
-                        </View>
-
-                        {/* Social Icons */}
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                gap: Math.max(15, W("5%")),
-                                marginTop: H("2%"),
-                            }}
-                        >
-                            <TouchableOpacity>
-                                <Image
-                                    source={require("../../assets/icons/google.png")}
-                                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Image
-                                    source={require("../../assets/icons/facebook.png")}
-                                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Image
-                                    source={require("../../assets/icons/apple.png")}
-                                    style={{ height: Math.max(20, W("5%")), width: Math.max(20, W("5%")) }}
-                                />
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* Footer */}
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                marginTop: H("2%"),
-                                flexWrap: "wrap",
-                            }}
-                        >
-                            <Text style={{ color: "gray", fontSize: Math.min(12, W("3.5%")) }}>Already have an account? </Text>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('Login1')}>
-                                <Text
-                                    style={{
-                                        color: "rgba(0, 153, 255, 1)",
-                                        fontSize: Math.min(12, W("3.5%")),
-                                        textDecorationLine: "underline",
-                                    }}
-                                >
-                                    Login
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+      <View style={styles.errorContainer}>
+        <Ionicons name="alert-circle" size={14} color={COLORS.error} />
+        <Text style={styles.errorText}>{message}</Text>
+      </View>
     );
+  };
+
+  const InputField = ({
+    iconFamily = "fontawesome",
+    icon,
+    label,
+    placeholder,
+    value,
+    onChangeText,
+    onBlur,
+    error,
+    touchedField,
+    keyboardType = "default",
+    autoCapitalize = "sentences",
+    secureTextEntry = false,
+    toggleSecure = null,
+  }) => {
+    const showError = touchedField && !!error;
+    const showSuccess = touchedField && !error && value.trim() !== "";
+
+    return (
+      <View style={styles.fieldBlock}>
+        <View style={styles.labelRow}>
+          {iconFamily === "ionicons" ? (
+            <Ionicons name={icon} size={14} color={COLORS.black} />
+          ) : (
+            <FontAwesome name={icon} size={14} color={COLORS.black} />
+          )}
+          <Text style={styles.labelText}>{label}</Text>
+        </View>
+
+        <View
+          style={[
+            styles.inputWrapper,
+            showError ? styles.inputError : null,
+            showSuccess ? styles.inputSuccess : null,
+          ]}
+        >
+          <TextInput
+            style={styles.textInput}
+            placeholder={placeholder}
+            placeholderTextColor={COLORS.placeholder}
+            value={value}
+            onChangeText={onChangeText}
+            onBlur={onBlur}
+            keyboardType={keyboardType}
+            autoCapitalize={autoCapitalize}
+            secureTextEntry={secureTextEntry}
+          />
+
+          {toggleSecure ? (
+            <TouchableOpacity activeOpacity={0.8} onPress={toggleSecure}>
+              <FontAwesome
+                name={secureTextEntry ? "eye" : "eye-slash"}
+                size={15}
+                color="#888"
+              />
+            </TouchableOpacity>
+          ) : null}
+        </View>
+
+        <ErrorMessage message={showError ? error : ""} />
+      </View>
+    );
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.keyboardContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/images/Splashbackground.jpg")}
+          style={styles.backgroundImage}
+        />
+
+        <RadialGradient
+          colors={[
+            "rgba(143, 0, 255, 1)",
+            "rgba(143, 0, 250, 0.6)",
+            "rgba(160, 80, 220, 0.2)",
+            "rgba(200, 120, 255, 0)",
+          ]}
+          stops={[0.1, 0.5, 0.7, 0.9]}
+          center={[W("50%"), H("35%")]}
+          radius={W("80%")}
+          style={styles.gradient}
+        />
+
+        <View style={styles.headerRow}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+              onPress={() => navigation.navigate("Login")}
+          >
+            <Entypo name="cross" size={24} color={COLORS.white} />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.mainTitle}>Create Account</Text>
+
+        <Text style={styles.subTitle}>
+          Set up your Company on{"\n"}Planet Care
+        </Text>
+
+        <View style={styles.formCard}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.formContent}
+          >
+            <Text style={styles.cardTitle}>Sign Up</Text>
+
+            <InputField
+              icon="user"
+              label="Full Name"
+              placeholder="Daniel Park"
+              value={form.fullName}
+              onChangeText={(text) => handleInputChange("fullName", text)}
+              onBlur={() => handleBlur("fullName")}
+              error={errors.fullName}
+              touchedField={touched.fullName}
+            />
+
+            <InputField
+              icon="building-o"
+              label="Company Name"
+              placeholder="Planet Care Inc."
+              value={form.companyName}
+              onChangeText={(text) => handleInputChange("companyName", text)}
+              onBlur={() => handleBlur("companyName")}
+              error={errors.companyName}
+              touchedField={touched.companyName}
+            />
+
+            <InputField
+              icon="envelope"
+              label="Company Email"
+              placeholder="example@gmail.com"
+              value={form.companyEmail}
+              onChangeText={(text) => handleInputChange("companyEmail", text)}
+              onBlur={() => handleBlur("companyEmail")}
+              error={errors.companyEmail}
+              touchedField={touched.companyEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <InputField
+              iconFamily="ionicons"
+              icon="people"
+              label="Company Size"
+              placeholder="50-200"
+              value={form.companySize}
+              onChangeText={(text) => handleInputChange("companySize", text)}
+              onBlur={() => handleBlur("companySize")}
+              error={errors.companySize}
+              touchedField={touched.companySize}
+            />
+
+            <InputField
+              icon="lock"
+              label="Set Password"
+              placeholder="Enter password"
+              value={form.password}
+              onChangeText={(text) => handleInputChange("password", text)}
+              onBlur={() => handleBlur("password")}
+              error={errors.password}
+              touchedField={touched.password}
+              secureTextEntry={!ui.showPassword}
+              toggleSecure={() =>
+                setUi((prev) => ({
+                  ...prev,
+                  showPassword: !prev.showPassword,
+                }))
+              }
+            />
+
+            <InputField
+              icon="lock"
+              label="Confirm Password"
+              placeholder="Confirm password"
+              value={form.confirmPassword}
+              onChangeText={(text) =>
+                handleInputChange("confirmPassword", text)
+              }
+              onBlur={() => handleBlur("confirmPassword")}
+              error={errors.confirmPassword}
+              touchedField={touched.confirmPassword}
+              secureTextEntry={!ui.showConfirmPassword}
+              toggleSecure={() =>
+                setUi((prev) => ({
+                  ...prev,
+                  showConfirmPassword: !prev.showConfirmPassword,
+                }))
+              }
+            />
+
+            <View style={styles.termsRow}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={handleTermsChange}
+                style={[
+                  styles.checkbox,
+                  ui.isChecked ? styles.checkboxChecked : null,
+                  errors.terms ? styles.checkboxError : null,
+                ]}
+              >
+                {ui.isChecked ? <Text style={styles.checkmark}>✓</Text> : null}
+              </TouchableOpacity>
+
+              <Text style={styles.termsText}>I agree with </Text>
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate("TermsConditions")}
+              >
+                <Text style={styles.termsLink}>Terms & Conditions</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ErrorMessage message={errors.terms} />
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleSignUp}
+              disabled={ui.isLoading}
+              style={[
+                styles.signUpButton,
+                ui.isLoading ? styles.buttonDisabled : null,
+              ]}
+            >
+              {ui.isLoading ? (
+                <ActivityIndicator color={COLORS.black} />
+              ) : (
+                <Text style={styles.signUpButtonText}>Sign Up</Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or sign up with</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <View style={styles.socialRow}>
+              <TouchableOpacity activeOpacity={0.8}>
+                <Image
+                  source={require("../../assets/icons/google.png")}
+                  style={styles.socialIcon}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={0.8}>
+                <Image
+                  source={require("../../assets/icons/facebook.png")}
+                  style={styles.socialIcon}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={0.8}>
+                <Image
+                  source={require("../../assets/icons/apple.png")}
+                  style={styles.socialIcon}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.footerRow}>
+              <Text style={styles.footerText}>Already have an account? </Text>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate("Login1")}
+              >
+                <Text style={styles.footerLink}>Login</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
 };
 
 export default CompanyAdmin;
+
+const styles = StyleSheet.create({
+  keyboardContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.black,
+  },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: W("100%"),
+    height: H("100%"),
+    resizeMode: "cover",
+  },
+  gradient: {
+    position: "absolute",
+    top: H("0%"),
+    alignSelf: "center",
+    width: W("100%"),
+    height: H("60%"),
+    borderRadius: 0,
+  },
+  headerRow: {
+    position: "absolute",
+    top: H("5%"),
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: W("5%"),
+  },
+  mainTitle: {
+    position: "absolute",
+    top: H("8%"),
+    alignSelf: "center",
+    color: COLORS.white,
+    fontSize: W("7%"),
+    fontWeight: "700",
+    textAlign: "center",
+    zIndex: 10,
+  },
+  subTitle: {
+    position: "absolute",
+    top: H("14%"),
+    alignSelf: "center",
+    color: COLORS.white,
+    fontSize: W("3.8%"),
+    textAlign: "center",
+    lineHeight: H("2.8%"),
+    paddingHorizontal: W("8%"),
+    zIndex: 10,
+  },
+  formCard: {
+    marginTop: H("22%"),
+    width: W("100%"),
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingBottom: H("5%"),
+    minHeight: H("78%"),
+  },
+  formContent: {
+    paddingTop: H("3%"),
+    paddingBottom: H("4%"),
+    paddingHorizontal: W("8%"),
+  },
+  cardTitle: {
+    fontSize: W("6.3%"),
+    fontWeight: "800",
+    textAlign: "center",
+    color: COLORS.black,
+    marginBottom: H("2%"),
+  },
+  fieldBlock: {
+    marginBottom: H("1.8%"),
+  },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: H("0.7%"),
+  },
+  labelText: {
+    marginLeft: W("2%"),
+    fontSize: W("3.7%"),
+    fontWeight: "700",
+    color: COLORS.black,
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: H("5.8%"),
+    borderBottomWidth: 1.2,
+    borderBottomColor: COLORS.border,
+  },
+  textInput: {
+    flex: 1,
+    fontSize: W("3.7%"),
+    color: COLORS.black,
+    paddingVertical: Platform.OS === "ios" ? H("1.4%") : H("0.8%"),
+  },
+  inputError: {
+    borderBottomColor: COLORS.error,
+  },
+  inputSuccess: {
+    borderBottomColor: COLORS.success,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: H("0.6%"),
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: W("3.1%"),
+    marginLeft: 4,
+    flex: 1,
+  },
+  termsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginTop: H("0.8%"),
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1.5,
+    borderColor: "#555",
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: W("2%"),
+  },
+  checkboxChecked: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  checkboxError: {
+    borderColor: COLORS.error,
+  },
+  checkmark: {
+    color: COLORS.white,
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  termsText: {
+    fontSize: W("3.5%"),
+    color: COLORS.black,
+  },
+  termsLink: {
+    fontSize: W("3.5%"),
+    color: COLORS.blue,
+    textDecorationLine: "underline",
+    fontWeight: "600",
+  },
+  signUpButton: {
+    alignSelf: "center",
+    width: W("65%"),
+    minHeight: H("6%"),
+    marginTop: H("3%"),
+    borderRadius: 12,
+    backgroundColor: COLORS.yellow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  signUpButtonText: {
+    fontSize: W("4%"),
+    fontWeight: "700",
+    color: COLORS.black,
+  },
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: H("2.5%"),
+    marginBottom: H("2%"),
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.lightGray,
+  },
+  dividerText: {
+    marginHorizontal: W("3%"),
+    color: COLORS.gray,
+    fontSize: W("3.4%"),
+    textAlign: "center",
+  },
+  socialRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: W("6%"),
+    marginBottom: H("2.5%"),
+  },
+  socialIcon: {
+    width: W("6%"),
+    height: W("6%"),
+    minWidth: 22,
+    minHeight: 22,
+    resizeMode: "contain",
+  },
+  footerRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  footerText: {
+    color: COLORS.gray,
+    fontSize: W("3.4%"),
+  },
+  footerLink: {
+    color: COLORS.blue,
+    fontSize: W("3.4%"),
+    textDecorationLine: "underline",
+    fontWeight: "600",
+  },
+});

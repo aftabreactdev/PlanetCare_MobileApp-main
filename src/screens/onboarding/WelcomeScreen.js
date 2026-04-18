@@ -1,135 +1,132 @@
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import RadialGradient from "react-native-radial-gradient";
-import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
+import AuthButton from "../../components/AuthButton";
 
 import images from "../../constants/images";
-const Welcomescreen = (props) => {
-   return (
-      <View style={{ flex: 1 }}>
 
-         <Image source={require("../../assets/images/Splashbackground.jpg")}
-            style={{ height: H('100%'), width: W('100%') }}
-         />
+const Welcomescreen = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      {/* Background */}
+      <Image
+        source={require("../../assets/images/Splashbackground.jpg")}
+        style={{
+          position: "absolute",
+          width: W("100%"),
+          height: H("100%"),
+          resizeMode: "cover",
+        }}
+      />
 
+      {/* Main Layout */}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-between",
+        }}
+      >
+        {/* Top Illustration Section */}
+     <View
+  style={{
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  <Image
+    source={images.welcomeIllustration}
+    style={{
+      height: H("35%"),
+      width: W("70%"),
+      resizeMode: "contain",
+    }}
+  />
+</View>
 
-         <RadialGradient
-            colors={[
-               "rgba(143, 0, 255, 1)",
-               "rgba(143, 0, 250, 0.6)",
-               "rgba(160, 80, 220, 0.2)",
-               "rgba(200, 120, 255, 0.0)",
-            ]}
-            stops={[0.2, 0.6, 0.8, 1]}
-            center={[W('50%'), H('50%')]}
-            radius={W('60%')}
+        {/* Bottom Card */}
+        <View
+          style={{
+            width: W("100%"),
+            minHeight: H("48%"),
+            backgroundColor: "#FFFFFF",
+            borderTopLeftRadius: 34,
+            borderTopRightRadius: 34,
+            alignItems: "center",
+            justifyContent: "center",
+            paddingHorizontal: W("7%"),
+            paddingTop: H("4%"),
+            paddingBottom: H("4%"),
+          }}
+        >
+          {/* Title */}
+          <Text
             style={{
-               position: "absolute",
-               top: H('10%'),
-               alignSelf: "center",
-               width: W('100%'),
-               height: H('40%'),
-               // borderRadius: H('40%'),
-               opacity: 0.8,
+              textAlign: "center",
+              fontSize: H("5%"),
+              lineHeight: H("6.2%"),
+              color: "#111111",
+              fontFamily: "Montserrat-Black",
+              marginBottom: H("2%"),
+              fontWeight:'bold'
             }}
-         />
-
-
-         <Image
-            source={images.welcomeIllustration}
-            style={{
-               height: H('40%'),
-               width: W('55%'),
-               position: "absolute",
-               top: H('10%'),
-               alignSelf: "center",
-               zIndex: 2,
-            }}
-         />
-
-
-         <View
-            style={{
-               backgroundColor: "white",
-               position: "absolute",
-               top: H('50%'),
-               width: W('100%'),
-               height: H('60%'),
-               borderRadius: H('4%'),
-               alignSelf: "center",
-               alignItems: "center",
-               justifyContent: "center",
-               zIndex: 3,
-               paddingHorizontal: W('3%'),
-            }}
-         >
-
+          >
+            Welcome to{"\n"}
             <Text
-               style={{
-                  fontFamily: "Montserrat-Black",
-                  fontWeight: "700",
-                  fontSize: H('5%'),
-                  textAlign: "center",
-                  lineHeight: H('6%'),
-                  color: "#030303",
-                  marginBottom: H('2%'),
-                  bottom: H('4%'),
-               }}
+              style={{
+                fontFamily: "Montserrat-Black",
+                color: "#111111",
+                letterSpacing: 1,
+              }}
             >
-               Welcome to{"\n"} PLANET{" "}
-               <Text
-                  style={{
-                     color: "rgba(0,135,218,1)",
-                     fontFamily: "Montserrat-Black",
-                     fontWeight: "900",
-
-
-                  }}
-               >
-                  CARE
-               </Text>
-            </Text>
-
-
-            <Text
-               style={{
-                  fontFamily: "Montserrat-Black",
-                  fontWeight: "700",
-                  fontSize: H('2.5%'),
-                  bottom: H('5%'),
-                  fontStyle: "italic",
-               }}
-            >
-               Your space for emotional
+              PLANET{" "}
             </Text>
             <Text
-               style={{
-                  fontFamily: "Montserrat-Black",
-                  fontWeight: "700",
-                  fontSize: H('2.5%'),
-                  fontStyle: "italic",
-                  bottom: H('4%'),
-               }}
+              style={{
+                fontFamily: "Montserrat-Black",
+                color: "rgba(0,135,218,1)",
+                letterSpacing: 1.2,
+              }}
             >
-               wellbeing
+              CARE
             </Text>
-            <TouchableOpacity onPress={() => props.navigation.navigate('Role')} style={{
+          </Text>
 
-            }}>
+          {/* Subtitle */}
+          <Text
+            style={{
+              fontSize: H("2.35%"),
+              lineHeight: H("3.2%"),
+              color: "#2F2F2F",
+              fontStyle: "italic",
+              textAlign: "center",
+              fontWeight:'bold'
+            }}
+          >
+            Your space for emotional
+          </Text>
 
-               <View>
-
-
-                  <Image source={require("../../assets/images/yellow.png")} style={{ height: H('7%'), width: W('13%'), alignSelf: "center", bottom: H('2.5%') }} />
-
-
-               </View>
-            </TouchableOpacity>
-
-
-         </View>
+          <Text
+            style={{
+              fontSize: H("2.35%"),
+              lineHeight: H("3.2%"),
+              color: "#2F2F2F",
+              fontStyle: "italic",
+              textAlign: "center",
+              marginBottom: H("3.5%"),
+              fontWeight:'bold'
+            }}
+          >
+            wellbeing
+          </Text>
+           <AuthButton  screen="Role" />
+        </View>
       </View>
-   );
+    </View>
+  );
 };
 
 export default Welcomescreen;

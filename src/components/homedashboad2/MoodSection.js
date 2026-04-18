@@ -13,7 +13,7 @@ const MoodSection = ({
     <View style={[{ alignItems: "center", marginVertical: 20 }, containerStyle]}>
       <Image
         source={moodImage}
-        style={[{ height: H('21%'), width: W('37%') }, imageStyle]}
+        style={[{ height: H('21.5%'), width: W('46.5%') }, imageStyle]}
       />
       <Text style={[
         { color: "#fff", marginTop: 10, fontSize: 16, fontWeight: "600" },

@@ -1,200 +1,251 @@
 import React, { useState } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 
-const Newpassword = (props) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showconfirmPassword, setShowconfirmPassword] = useState(false);
+const COLORS = {
+  white: "#FFFFFF",
+  black: "#111111",
+  gray: "#6B6B6B",
+  error: "#E53935",
+  yellow: "rgba(255,215,0,1)",
+  border: "#D9D9D9",
+  lightBg: "rgba(218,228,253,1)",
+};
 
-  // ✅ States
+const InputField = ({
+  label,
+  value,
+  onChangeText,
+  secure,
+  toggleSecure,
+}) => {
+  return (
+    <View style={styles.fieldBlock}>
+      <Text style={styles.label}>{label}</Text>
+
+      <View style={styles.inputWrapper}>
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          placeholder="Enter password"
+          secureTextEntry={secure}
+          style={styles.input}
+        />
+
+        <TouchableOpacity onPress={toggleSecure}>
+          <Icon name={secure ? "eye" : "eye-slash"} size={14} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const Newpassword = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [error, setError] = useState("");
 
-  // ✅ Validation
-  const handleSave = () => {
+  const validate = () => {
     if (!password || !confirmPassword) {
-      setError("Please fill both fields");
-      return;
+      return "Please fill in both fields";
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
+      return "Password must be at least 6 characters long";
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      return "Passwords do not match";
+    }
+
+    return "";
+  };
+
+  const handleSave = () => {
+    const validationError = validate();
+
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
     setError("");
-    props.navigation.navigate("Login");
+    navigation.navigate("Login");
   };
 
+  const isValid =
+    password &&
+    confirmPassword &&
+    password.length >= 6 &&
+    password === confirmPassword;
+
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, backgroundColor: "white" }}
     >
-      <ScrollView 
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={{ paddingVertical: H("5%"), paddingHorizontal: W("5%") }}>
-          {/* Heading */}
-          <Text
-            style={{
-              fontWeight: "900",
-              fontSize: Math.min(25, W("7%")),
-              marginTop: H("2%"),
-              alignSelf: "center",
-              bottom: H("8%"),
-            }}
-          >
-            Create New Password
-          </Text>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} />
+        </TouchableOpacity>
+      </View>
 
-          {/* Lock Circle */}
-          <View
-            style={{
-              backgroundColor: "rgba(218, 228, 253, 1)",
-              height: Math.min(160, W("40%")),
-              width: Math.min(160, W("40%")),
-              borderRadius: Math.min(80, W("20%")),
-              marginTop: H("5%"),
-              alignSelf: "center",
-              justifyContent: "center",
-              alignItems: "center",
-              bottom: H("10%"),
-            }}
-          >
-            <Image
-              source={require("../../assets/icons/lock.png")}
-              style={{
-                position: "absolute",
-                height: Math.min(180, W("50%")),
-                width: Math.min(180, W("50%")),
-                alignSelf: "center",
-                bottom: H("0%"),
-              }}
-              resizeMode="contain"
-            />
-            <Icon
-              name="check"
-              size={Math.min(14, W("4%"))}
-              color="white"
-              style={{
-                backgroundColor: "rgba(103, 111, 116, 1)",
-                height: Math.min(25, W("7%")),
-                width: Math.min(25, W("7%")),
-                borderRadius: Math.min(13, W("3.5%")),
-                textAlign: "center",
-                textAlignVertical: "center",
-                position: "absolute",
-                bottom: "27%",
-                right: "25%",
-              }}
-            />
-          </View>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        {/* TITLE */}
+        <Text style={styles.title}>Create New Password</Text>
 
-          {/* Info */}
-          <View style={{ alignItems: "center", marginTop: H("5%") ,bottom: H("10%")}}>
-            <Text style={{ fontSize: Math.min(14, W("4%")) }}>Your new password must be</Text>
-            <Text style={{ fontSize: Math.min(14, W("4%")), marginTop: H("0.3%") }}>different from previously</Text>
-            <Text style={{ fontSize: Math.min(14, W("4%")), marginTop: H("0.3%") }}>used password</Text>
-          </View>
-
-          {/* Password */}
-          <View style={{ alignItems: "center", marginTop: H("4%"),bottom: H("10%") }}>
-            <Text style={{ right: W("12%"), fontSize: Math.min(14, W("4%")) }}>New Password</Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                borderBottomWidth: 1,
-                width: W("55%"),
-                borderColor: "rgba(217, 217, 217, 1)",
-              }}
-            >
-              <TextInput
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  setError("");
-                }}
-                placeholder="Enter password"
-                secureTextEntry={!showPassword}
-                style={{ flex: 1, fontSize: Math.min(13, W("3.5%")), paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%") }}
-              />
-
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Icon name={showPassword ? "eye-slash" : "eye"} size={Math.min(13, W("3.5%"))} style={{ marginRight: W("2%") }} />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Confirm Password */}
-          <View style={{ alignItems: "center", marginTop: H("3%"),bottom: H("10%") }}>
-            <Text style={{ right: W("12%"), fontSize: Math.min(14, W("4%")) }}>Confirm Password</Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                borderBottomWidth: 1,
-                width: W("55%"),
-                borderColor: "rgba(217, 217, 217, 1)",
-              }}
-            >
-              <TextInput
-                value={confirmPassword}
-                onChangeText={(text) => {
-                  setConfirmPassword(text);
-                  setError("");
-                }}
-                placeholder="Confirm password"
-                secureTextEntry={!showconfirmPassword}
-                style={{ flex: 1, fontSize: Math.min(13, W("3.5%")), paddingVertical: Platform.OS === "ios" ? H("0.8%") : H("0.5%") }}
-              />
-
-              <TouchableOpacity
-                onPress={() => setShowconfirmPassword(!showconfirmPassword)}
-              >
-                <Icon name={showconfirmPassword ? "eye-slash" : "eye"} size={Math.min(13, W("3.5%"))} style={{ marginRight: W("2%") }} />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Error Message */}
-          {error ? (
-            <Text style={{ color: "red", alignSelf: "center", marginTop: H("2%"), fontSize: Math.min(12, W("3.5%")) }}>
-              {error}
-            </Text>
-          ) : null}
-
-          {/* Button */}
-          <TouchableOpacity style={{ marginTop: H("4%") }} onPress={handleSave}>
-            <Text
-              style={{
-                backgroundColor: "rgba(255, 236, 135, 1)",
-                height: Math.max(30, H("5%")),
-                width: Math.min(200, W("70%")),
-                borderRadius: 10,
-                textAlignVertical: "center",
-                textAlign: "center",
-                fontSize: Math.min(13, W("3.5%")),
-                fontWeight: "bold",
-                alignSelf: "center",
-              }}
-            >
-              Save Password
-            </Text>
-          </TouchableOpacity>
+        {/* ICON */}
+        <View style={styles.iconCircle}>
+          <Image
+            source={require("../../assets/icons/lock.png")}
+            style={styles.icon}
+          />
         </View>
+
+        {/* INFO */}
+        <View style={styles.info}>
+          <Text>Your new password must be different</Text>
+          <Text>from previously used passwords</Text>
+        </View>
+
+        {/* INPUTS */}
+        <InputField
+          label="New Password"
+          value={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            setError("");
+          }}
+          secure={!showPassword}
+          toggleSecure={() => setShowPassword(!showPassword)}
+        />
+
+        <InputField
+          label="Confirm Password"
+          value={confirmPassword}
+          onChangeText={(text) => {
+            setConfirmPassword(text);
+            setError("");
+          }}
+          secure={!showConfirmPassword}
+          toggleSecure={() =>
+            setShowConfirmPassword(!showConfirmPassword)
+          }
+        />
+
+        {/* ERROR */}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        {/* BUTTON */}
+        <TouchableOpacity
+          onPress={handleSave}
+          disabled={!isValid}
+          style={[
+            styles.button,
+            !isValid && { opacity: 0.5 },
+          ]}
+        >
+          <Text style={styles.buttonText}>Save Password</Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
 export default Newpassword;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  header: {
+    position: "absolute",
+    top: H("5%"),
+    left: W("5%"),
+    zIndex: 10,
+  },
+  scroll: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: W("6%"),
+    paddingTop: H("10%"),
+  },
+  title: {
+    fontSize: W("7%"),
+    fontWeight: "800",
+    marginBottom: H("3%"),
+  },
+  iconCircle: {
+    width: W("40%"),
+    height: W("40%"),
+    borderRadius: 999,
+    backgroundColor: COLORS.lightBg,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: H("3%"),
+  },
+  icon: {
+    width: W("25%"),
+    height: W("25%"),
+  },
+  info: {
+    alignItems: "center",
+    marginBottom: H("4%"),
+  },
+  fieldBlock: {
+    width: W("70%"),
+    marginBottom: H("2%"),
+  },
+  label: {
+    marginBottom: H("0.5%"),
+    fontWeight: "600",
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    paddingVertical: H("1%"),
+  },
+  error: {
+    color: COLORS.error,
+    marginTop: H("1%"),
+  },
+  button: {
+    marginTop: H("3%"),
+    width: W("70%"),
+    height: H("6%"),
+    backgroundColor: COLORS.yellow,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontWeight: "700",
+  },
+});

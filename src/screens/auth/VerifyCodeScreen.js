@@ -1,188 +1,296 @@
-import React, { useState, useRef } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
-import { widthPercentageToDP as W, heightPercentageToDP as H } from "react-native-responsive-screen";
+import React, { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 
-const Emailverification = (props) => {
+const COLORS = {
+  white: "#FFFFFF",
+  black: "#111111",
+  gray: "#6B6B6B",
+  error: "#E53935",
+  blue: "rgba(0,153,255,1)",
+  yellow: "rgba(255,215,0,1)",
+  lightBg: "rgba(218,228,253,1)",
+  otpBg: "rgba(255,249,218,1)",
+  otpUnderline: "rgba(255,215,0,1)",
+};
+
+const OtpInputBox = ({
+  value,
+  inputRef,
+  onChangeText,
+  onKeyPress,
+}) => {
+  return (
+    <View style={styles.otpBox}>
+      <TextInput
+        ref={inputRef}
+        value={value}
+        onChangeText={onChangeText}
+        onKeyPress={onKeyPress}
+        keyboardType="number-pad"
+        maxLength={1}
+        secureTextEntry
+        style={styles.otpInput}
+        textAlign="center"
+      />
+      <View style={styles.otpUnderline} />
+    </View>
+  );
+};
+
+const Emailverification = ({ navigation }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
 
   const inputs = useRef([]);
 
-  //  Handle input change
   const handleChange = (text, index) => {
-    if (!/^[0-9]?$/.test(text)) return; // allow only numbers
+    if (!/^[0-9]?$/.test(text)) return;
 
-    let newOtp = [...otp];
+    const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
     setError("");
 
-    //  Move to next input
-    if (text && index < 3) {
-      inputs.current[index + 1].focus();
+    if (text && index < otp.length - 1) {
+      inputs.current[index + 1]?.focus();
     }
   };
 
-  //  Handle backspace
   const handleKeyPress = (e, index) => {
     if (e.nativeEvent.key === "Backspace" && otp[index] === "" && index > 0) {
-      inputs.current[index - 1].focus();
+      inputs.current[index - 1]?.focus();
     }
   };
 
-  //  Validate OTP
   const handleVerify = () => {
     if (otp.some((digit) => digit === "")) {
-      setError("Please enter complete 4-digit code");
+      setError("Please enter the complete 4-digit verification code");
       return;
     }
 
-    props.navigation.navigate("NewPassword");
+    setError("");
+    navigation.navigate("NewPassword");
+  };
+
+  const handleResend = () => {
+    setOtp(["", "", "", ""]);
+    setError("");
+    inputs.current[0]?.focus();
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
+      style={styles.keyboardContainer}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, backgroundColor: "white" }}
     >
-      <ScrollView 
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={{ paddingVertical: H("5%"), paddingHorizontal: W("5%") }}>
-          <Text style={{ fontWeight: "900", fontSize: Math.min(25, W("7%")), marginTop: H("2%"), alignSelf: "center",bottom: H("10%") }}>
-            Verify Your Email
-          </Text>
-
-          <View
-            style={{
-              backgroundColor: "rgba(218, 228, 253, 1)",
-              height: Math.min(160, W("40%")),
-              width: Math.min(160, W("40%")),
-              borderRadius: Math.min(80, W("20%")),
-              marginTop: H("5%"),
-              alignSelf: "center",
-              justifyContent: "center",
-              alignItems: "center",
-              bottom: H("10%"),
-            }}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
           >
+            <Ionicons name="arrow-back" size={24} color={COLORS.black} />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.title}>Verify Your Email</Text>
+
+          <View style={styles.iconCircle}>
             <Image
               source={require("../../assets/icons/massage.png")}
-              style={{
-                height: Math.min(180, W("30%")),
-                width: Math.min(180, W("50%")),
-                alignSelf: "center",
-              }}
+              style={styles.iconImage}
               resizeMode="contain"
             />
           </View>
-<View style={{
-              alignSelf: "center",
 
-              bottom: H("8%"),
-            }}>  
+          <View style={styles.infoWrapper}>
+            <Text style={styles.infoText}>
+              Please enter the 4-digit code
+            </Text>
+            <Text style={styles.infoText}>
+              sent to example@gmail.com
+            </Text>
+          </View>
 
-
-               <Text style={{ alignSelf: "center", marginTop: H("5%"), fontSize: Math.min(14, W("4%")) }}>
-            Please enter the 4 digit code
-          </Text>
-          <Text style={{ alignSelf: "center", marginTop: H("0.5%"), fontSize: Math.min(14, W("4%")) }}>
-            sent to example@gmail.com
-          </Text>
-              
-              
-              
-              </View>
-
-         
-
-          {/* OTP Inputs */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginTop: H("5%"),
-              gap: Math.max(10, W("4%")),
-              bottom: H("8%"),
-            }}
-          >
-            {otp.map((digit, i) => (
-              <View key={i} style={{ alignItems: "center" }}>
-                <TextInput
-                  ref={(ref) => (inputs.current[i] = ref)}
-                  value={digit}
-                  onChangeText={(text) => handleChange(text, i)}
-                  onKeyPress={(e) => handleKeyPress(e, i)}
-                  keyboardType="number-pad"
-                  maxLength={1}
-                  secureTextEntry={true} 
-                  style={{
-                    backgroundColor: "rgba(255, 249, 218, 1)",
-                    fontSize: Math.min(30, W("8%")),
-                    width: Math.min(45, W("12%")),
-                    height: Math.min(55, H("7%")),
-                    textAlign: "center",
-                    fontWeight: "900",
-                    borderRadius: 8,
-                  }}
-                />
-                <View
-                  style={{
-                    width: Math.min(35, W("9%")),
-                    height: 3,
-                    backgroundColor: "rgba(255, 215, 0, 1)",
-                    borderRadius: 2,
-                    marginTop: H("0.5%"),
-                  }}
-                />
-              </View>
+          <View style={styles.otpRow}>
+            {otp.map((digit, index) => (
+              <OtpInputBox
+                key={index}
+                value={digit}
+                inputRef={(ref) => {
+                  inputs.current[index] = ref;
+                }}
+                onChangeText={(text) => handleChange(text, index)}
+                onKeyPress={(e) => handleKeyPress(e, index)}
+              />
             ))}
           </View>
 
-          {/* Error */}
-          {error ? (
-            <Text style={{ color: "red", alignSelf: "center", marginTop: H("4%"), fontSize: Math.min(12, W("3.5%")) }}>
-              {error}
-            </Text>
-          ) : null}
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          {/* Resend */}
-          <TouchableOpacity style={{ marginTop: H("4%"),top: H("7%") }}>
-            <Text
-              style={{
-                color: "rgba(0, 153, 255, 1)",
-                fontSize: Math.min(12, W("3.5%")),
-                textDecorationLine: "underline",
-                alignSelf: "center",
-              }}
-            >
-              Resend Code
-            </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleResend}
+            style={styles.resendButton}
+          >
+            <Text style={styles.resendText}>Resend Code</Text>
           </TouchableOpacity>
 
-          {/* Verify */}
-          <TouchableOpacity style={{ marginTop: H("3%"),top: H("7%") }} onPress={handleVerify}>
-            <Text
-              style={{
-                backgroundColor: "rgba(255, 215, 0, 1)",
-                height: Math.max(30, H("5%")),
-                width: Math.min(200, W("70%")),
-                borderRadius: 10,
-                textAlign: "center",
-                textAlignVertical: "center",
-                fontWeight: "bold",
-                alignSelf: "center",
-                fontSize: Math.min(15, W("4%")),
-              }}
-            >
-              Verify
-            </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleVerify}
+            style={styles.verifyButton}
+          >
+            <Text style={styles.verifyButtonText}>Verify</Text>
           </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
 
 export default Emailverification;
+
+const styles = StyleSheet.create({
+  keyboardContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  header: {
+    position: "absolute",
+    top: H("5%"),
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    paddingHorizontal: W("5%"),
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    paddingVertical: H("0.5%"),
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: W("6%"),
+    paddingTop: H("12%"),
+    paddingBottom: H("6%"),
+  },
+  title: {
+    fontSize: W("7%"),
+    fontWeight: "800",
+    color: COLORS.black,
+    textAlign: "center",
+    marginBottom: H("4%"),
+  },
+  iconCircle: {
+    width: W("40%"),
+    height: W("40%"),
+    maxWidth: 170,
+    maxHeight: 170,
+    borderRadius: 999,
+    backgroundColor: COLORS.lightBg,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: H("4%"),
+  },
+  iconImage: {
+    width: W("24%"),
+    height: W("24%"),
+    maxWidth: 110,
+    maxHeight: 110,
+  },
+  infoWrapper: {
+    marginBottom: H("4%"),
+  },
+  infoText: {
+    textAlign: "center",
+    color: COLORS.gray,
+    fontSize: W("4%"),
+    lineHeight: H("2.8%"),
+  },
+  otpRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: W("4%"),
+    marginBottom: H("2%"),
+  },
+  otpBox: {
+    alignItems: "center",
+  },
+  otpInput: {
+    width: W("12%"),
+    height: H("7%"),
+    minWidth: 42,
+    minHeight: 52,
+    backgroundColor: COLORS.otpBg,
+    borderRadius: 10,
+    fontSize: W("6%"),
+    fontWeight: "900",
+    color: COLORS.black,
+  },
+  otpUnderline: {
+    width: W("9%"),
+    minWidth: 30,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: COLORS.otpUnderline,
+    marginTop: H("0.7%"),
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: W("3.4%"),
+    textAlign: "center",
+    marginTop: H("1%"),
+  },
+  resendButton: {
+    marginTop: H("3%"),
+  },
+  resendText: {
+    color: COLORS.blue,
+    fontSize: W("3.5%"),
+    textDecorationLine: "underline",
+    fontWeight: "500",
+  },
+  verifyButton: {
+    marginTop: H("3%"),
+    width: W("70%"),
+    maxWidth: 260,
+    height: H("6%"),
+    minHeight: 44,
+    borderRadius: 12,
+    backgroundColor: COLORS.yellow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  verifyButtonText: {
+    color: COLORS.black,
+    fontSize: W("4%"),
+    fontWeight: "700",
+  },
+});

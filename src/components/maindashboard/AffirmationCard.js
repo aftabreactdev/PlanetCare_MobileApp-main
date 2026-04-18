@@ -1,84 +1,51 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Dimensions, Platform } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import {
+  widthPercentageToDP as W,
+  heightPercentageToDP as H,
+} from "react-native-responsive-screen";
 
-const { width: screenWidth } = Dimensions.get("window");
-
-const AffirmationCard = () => {
+const AffirmationCard = ({
+  title = "Affirmation of the Day",
+  subtitle = "I am safe, I am growing",
+  onPress,
+  targetScreen = "HomeDashboad2",
+}) => {
   const navigation = useNavigation();
 
-  // Responsive sizing based on screen width
-  const marginHorizontal = screenWidth * 0.05; // 5% of screen width
-  const marginTop = screenWidth * 0.05;
-  const borderRadius = screenWidth * 0.03; // Responsive border radius
-  const padding = screenWidth * 0.04;
-  const titleFontSize = screenWidth * 0.045;
-  const subtitleFontSize = screenWidth * 0.035;
-  const subtitleMarginTop = screenWidth * 0.01;
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+      return;
+    }
+
+    navigation.navigate(targetScreen);
+  };
 
   return (
-    <TouchableOpacity 
-      onPress={() => navigation.navigate("HomeDashboad2")}
-      activeOpacity={0.7}
-      style={{
-        // Pixel perfect: ensure touchable has no extra spacing
-        marginHorizontal: marginHorizontal,
-        marginTop: marginTop,
-      }}
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={0.85}
+      style={styles.touchable}
     >
-      <View
-        style={{
-          backgroundColor: "rgba(0, 78, 196, 1)",
-          borderRadius: borderRadius,
-          padding: padding,
-          borderWidth: 1,
-          borderColor: "white",
-          // Pixel perfect fixes for Android
-          ...Platform.select({
-            android: {
-              elevation: 0,
-              borderWidth: 1,
-            },
-          }),
-        }}
-      >
-        <Text 
-          style={{ 
-            color: "#fff", 
-            fontWeight: "bold",
-            fontSize: titleFontSize,
-            // Pixel perfect: remove default font padding
-            includeFontPadding: false,
-            ...Platform.select({
-              android: {
-                textAlignVertical: "center",
-              },
-            }),
-          }}
+      <View style={styles.card}>
+        <Text
+          style={styles.title}
           numberOfLines={1}
           adjustsFontSizeToFit
           minimumFontScale={0.9}
         >
-          Affirmation of the Day
+          {title}
         </Text>
-        <Text 
-          style={{ 
-            color: "#E0E0E0", 
-            marginTop: subtitleMarginTop,
-            fontSize: subtitleFontSize,
-            // Pixel perfect: remove default font padding
-            includeFontPadding: false,
-            ...Platform.select({
-              android: {
-                textAlignVertical: "center",
-              },
-            }),
-          }}
+
+        <Text
+          style={styles.subtitle}
           numberOfLines={2}
           adjustsFontSizeToFit
           minimumFontScale={0.85}
         >
-          I am safe, I am growing
+          {subtitle}
         </Text>
       </View>
     </TouchableOpacity>
@@ -86,3 +53,41 @@ const AffirmationCard = () => {
 };
 
 export default AffirmationCard;
+
+const styles = StyleSheet.create({
+  touchable: {
+    marginHorizontal: W("5%"),
+    marginTop: H("3%"),
+  },
+  card: {
+    backgroundColor: "rgba(0, 78, 196, 1)",
+    borderRadius: W("3%"),
+    padding: W("4%"),
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
+    ...Platform.select({
+      android: {
+        elevation: 0,
+      },
+    }),
+  },
+  title: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: W("4.5%"),
+    includeFontPadding: false,
+    ...(Platform.OS === "android"
+      ? { textAlignVertical: "center" }
+      : {}),
+  },
+  subtitle: {
+    color: "#E0E0E0",
+    marginTop: H("0.8%"),
+    fontSize: W("3.5%"),
+    lineHeight: H("2.5%"),
+    includeFontPadding: false,
+    ...(Platform.OS === "android"
+      ? { textAlignVertical: "center" }
+      : {}),
+  },
+});
